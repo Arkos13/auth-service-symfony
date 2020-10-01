@@ -1,0 +1,93 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $mailerSenderAddress: '%env(MAILER_USER)%'
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Model/User/Entity,Infrastructure/Migrations,Tests,Kernel.php}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Ports\Rest\Action\:
+        resource: '../src/Ports/Rest/Action'
+        tags: ['controller.service_arguments']
+
+    command_handlers:
+        namespace: App\Application\Command\
+        resource: '%kernel.project_dir%/src/Application/Command/*/*/*CommandHandler.php'
+        autoconfigure: false
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
+    query_handlers:
+        namespace: App\Application\Query\
+        resource: '%kernel.project_dir%/src/Application/Query/*/*/*QueryHandler.php'
+        autoconfigure: false
+        tags:
+            - { name: messenger.message_handler, bus: query.bus }
+
+    event_handlers:
+        namespace: App\Application\Event\
+        resource: '%kernel.project_dir%/src/Application/Event/*/*/*EventHandler.php'
+        autoconfigure: false
+        tags:
+            - { name: messenger.message_handler, bus: event.bus }
+
+###################### Services ################################
+    App\Application\Service\PasswordHasher\PasswordHasherInterface: '@App\Application\Service\PasswordHasher\PasswordHasherArgon2i'
+
+    App\Application\Service\User\Network\OAuth\Fetch\FetchUser:
+        arguments:
+            $clientRegistry: '@App\Application\Service\OAuth\Client\Registry\ClientRegistry'
+
+    ###################### Handlers ################################
+
+    App\Application\Command\User\Email\SendChangeInvite\SendChangeInviteCommandHandler:
+        arguments:
+            $confirmEmailTokenFactory: '@App\Application\Service\User\ConfirmEmailToken\ConfirmEmailTokenFactory'
+
+    App\Application\Command\User\Phone\ConfirmCode\Generate\GeneratePhoneConfirmCodeCommandHandler:
+        arguments:
+            $smsService: '@App\Application\Service\Sms\FakeSmsService'
+    ###################### Listeners ################################
+
+    App\Application\EventListener\OAuth2\UserResolveListener:
+        tags:
+            - { name: kernel.event_listener, event: trikoder.oauth2.user_resolve, method: onUserResolve }
+
+    App\Infrastructure\Http\RequestDtoResolver:
+        tags:
+            - { name: controller.request_value_resolver, priority: 50 }
+
+    App\Application\EventListener\Http\RequestListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
+
+    App\Application\EventListener\User\UserAuthenticatedHistoryListener:
+        tags:
+            - { name:  kernel.event_listener, event: user.authenticated.history}
+
+    ######################## PhpAmqpLib #######################################
+
+    PhpAmqpLib\Channel\AMQPChannel:
+        arguments:
+            $connection: '@PhpAmqpLib\Connection\AMQPSocketConnection'
+    PhpAmqpLib\Connection\AMQPSocketConnection:
+        arguments:
+            $host: '%env(AMQP_HOST)%'
+            $port: '%env(AMQP_PORT)%'
+            $user: '%env(AMQP_USER)%'
+            $password: '%env(AMQP_PASSWORD)%'

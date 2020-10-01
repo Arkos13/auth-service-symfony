@@ -1,0 +1,124 @@
+{
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "synchronize",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "events",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "auth_logs",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "synchronize_mess",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "synchronize_market",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "events",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "auth_logs",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "synchronize",
+      "vhost": "/",
+      "destination": "synchronize_mess",
+      "destination_type": "queue",
+      "routing_key": "synchronize_phone",
+      "arguments": {}
+    },
+    {
+      "source": "synchronize",
+      "vhost": "/",
+      "destination": "synchronize_mess",
+      "destination_type": "queue",
+      "routing_key": "synchronize_email",
+      "arguments": {}
+    },
+    {
+      "source": "synchronize",
+      "vhost": "/",
+      "destination": "synchronize_market",
+      "destination_type": "queue",
+      "routing_key": "synchronize_email",
+      "arguments": {}
+    },
+    {
+      "source": "events",
+      "vhost": "/",
+      "destination": "events",
+      "destination_type": "queue",
+      "routing_key": "event",
+      "arguments": {}
+    },
+    {
+      "source": "auth_logs",
+      "vhost": "/",
+      "destination": "auth_logs",
+      "destination_type": "queue",
+      "routing_key": "logstash",
+      "arguments": {}
+    }
+  ],
+  "users": [
+    {
+      "name": "rabbit",
+      "password": "rabbit",
+      "tags": "administrator"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "rabbit",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+fos_rest:
+  view:
+    view_response_listener:  true
+  body_converter:
+    enabled: true
+  body_listener: true
+
+  format_listener:
+    rules:
+      - { path: ^/api, prefer_extension: true, fallback_format: json, priorities: [ json ] }
+      - { path: ^/open_api, fallback_format: json, priorities: [ json ], prefer_extension: true }
+
+  routing_loader: false

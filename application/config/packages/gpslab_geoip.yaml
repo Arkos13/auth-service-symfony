@@ -1,0 +1,12 @@
+gpslab_geoip:
+    # Path to download GeoIP database.
+    path: '%kernel.project_dir%/var/GeoLite2-City.mmdb'
+
+    # Get model data in this locale
+    locales: [ 'ru' ]
+
+    # Database edition ID
+    edition: 'GeoLite2-City'
+
+    # Your personal licence key
+    license: 'TNghihRIyfUt'

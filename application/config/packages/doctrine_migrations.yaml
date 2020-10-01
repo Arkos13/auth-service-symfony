@@ -1,0 +1,7 @@
+doctrine_migrations:
+    migrations_paths:
+        'App\Infrastructure\Migrations': 'src/Infrastructure/Migrations'
+    connection: default
+    storage:
+        table_storage:
+            table_name: 'doctrine_migration_versions'

@@ -1,0 +1,32 @@
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+            channels: ["!event"]
+            max_files: 7
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!event", "!doctrine", "!console"]
+        info:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.info.log"
+            level: info
+            max_files: 7
+        error:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.error.log"
+            level: error
+            max_files: 7
+        queue_info:
+            type: amqp
+            exchange: 'PhpAmqpLib\Channel\AMQPChannel'
+            exchange_name: 'auth_logs'
+            level: info
+        queue_error:
+            type: amqp
+            exchange: 'PhpAmqpLib\Channel\AMQPChannel'
+            exchange_name: 'auth_logs'
+            level: error

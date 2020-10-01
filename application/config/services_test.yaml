@@ -1,0 +1,16 @@
+imports:
+  - { resource: services.yaml }
+
+services:
+  _defaults:
+      autowire: true
+      autoconfigure: true
+      public: true
+
+  App\Application\Service\User\Network\OAuth\Fetch\FetchUser:
+      arguments:
+          $clientRegistry: '@App\Application\Service\OAuth\Client\Registry\FakeClientRegistry'
+
+  App\Application\Command\User\Phone\ConfirmCode\Generate\GeneratePhoneConfirmCodeCommandHandler:
+      arguments:
+          $smsService: '@App\Application\Service\Sms\FakeSmsService'

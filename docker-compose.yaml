@@ -1,0 +1,67 @@
+version: '3'
+services:
+  auth-service-nginx:
+    container_name: auth-service-nginx
+    build:
+      context: ./docker/nginx
+    volumes:
+      - ./application:/app
+    depends_on:
+      - auth-service-php-fpm
+    ports:
+      - "8082:80"
+    networks:
+      - internal
+  auth-service-php-fpm:
+    container_name: auth-service-php-fpm
+    build:
+      context: ./docker/php-fpm
+    depends_on:
+      - auth-service-postgres
+      - auth-service-rabbitmq
+    volumes:
+      - ./application:/app
+    networks:
+      - internal
+  auth-service-postgres:
+    image: postgres:12-alpine
+    container_name: auth-service-postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: app
+    ports:
+      - "54322:5432"
+    networks:
+      - internal
+  auth-service-mailer:
+    container_name: auth-service-mailer
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+    networks:
+      - internal
+  auth-service-rabbitmq:
+    container_name: auth-service-rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - "8085:15672"
+      - "5672:5672"
+    volumes:
+      - ./docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins
+      - ./docker/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./docker/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+    networks:
+      - internal
+volumes:
+  composer:
+  postgres-data:
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.222.0/28
