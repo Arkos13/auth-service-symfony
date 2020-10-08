@@ -2,7 +2,9 @@
 
 namespace App\Application\Command\User\Registration;
 
-class RegistrationUserCommand
+use App\Application\Command\CommandInterface;
+
+class RegistrationUserCommand implements CommandInterface
 {
     private string $email;
     private string $firstName;

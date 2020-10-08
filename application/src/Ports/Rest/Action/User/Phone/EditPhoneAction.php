@@ -2,6 +2,7 @@
 
 namespace App\Ports\Rest\Action\User\Phone;
 
+use App\Application\Command\CommandBusInterface;
 use App\Application\Command\User\Phone\Edit\EditPhoneCommand;
 use App\Model\User\Entity\UserProfile;
 use App\Model\User\Service\UserProfile\PhoneConfirmCode\CheckConfirmCodeInterface;
@@ -12,24 +13,21 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\HandleTrait;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Ports\Rest\Request\User\UserProfilePhoneEditRequest;
 
 class EditPhoneAction extends BaseAction
 {
-    use HandleTrait;
-
     private CheckConfirmCodeInterface $checkConfirmCode;
+    private CommandBusInterface $commandBus;
 
     public function __construct(SerializerInterface $serializer,
                                 CheckConfirmCodeInterface $checkConfirmCode,
-                                MessageBusInterface $commandBus)
+                                CommandBusInterface $commandBus)
     {
         parent::__construct($serializer);
         $this->checkConfirmCode = $checkConfirmCode;
-        $this->messageBus = $commandBus;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -55,7 +53,7 @@ class EditPhoneAction extends BaseAction
     {
         try {
             $phone = $this->checkConfirmCode->checkCode($this->getCurrentUser(), $request->code);
-            $this->handle(new EditPhoneCommand($profile->getUser()->getId(), $phone));
+            $this->commandBus->handle(new EditPhoneCommand($profile->getUser()->getId(), $phone));
             return $this->jsonResponse(true);
         } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage());

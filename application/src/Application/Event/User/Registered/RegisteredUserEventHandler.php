@@ -2,13 +2,13 @@
 
 namespace App\Application\Event\User\Registered;
 
+use App\Application\Event\EventHandlerInterface;
 use App\Application\Service\Mail\MailServiceInterface;
 use App\Model\User\Exception\EmailInviteException;
 use App\Model\User\Repository\UserRepositoryInterface;
 use App\Model\User\Service\Token\TokenGeneratorInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class RegisteredUserEventHandler implements MessageHandlerInterface
+class RegisteredUserEventHandler implements EventHandlerInterface
 {
     private MailServiceInterface $mailService;
     private UserRepositoryInterface $userRepository;
@@ -23,7 +23,7 @@ class RegisteredUserEventHandler implements MessageHandlerInterface
         $this->tokenGenerator = $tokenGenerator;
     }
 
-    public function __invoke(RegisteredUserEvent $event)
+    public function __invoke(RegisteredUserEvent $event): void
     {
         $user = $this->userRepository->findOneByEmail($event->getEmail());
 

@@ -2,12 +2,12 @@
 
 namespace App\Application\Command\User\Confirm;
 
+use App\Application\Command\CommandHandlerInterface;
 use App\Model\User\Exception\TokenExpiredException;
 use App\Model\User\Exception\UserConfirmationTokenNotFoundException;
 use App\Model\User\Repository\UserRepositoryInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class ConfirmUserCommandHandler implements MessageHandlerInterface
+class ConfirmUserCommandHandler implements CommandHandlerInterface
 {
     private UserRepositoryInterface $userRepository;
 

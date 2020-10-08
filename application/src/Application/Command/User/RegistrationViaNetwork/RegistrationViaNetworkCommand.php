@@ -2,7 +2,9 @@
 
 namespace App\Application\Command\User\RegistrationViaNetwork;
 
-class RegistrationViaNetworkCommand
+use App\Application\Command\CommandInterface;
+
+class RegistrationViaNetworkCommand implements CommandInterface
 {
     private string $email;
     private string $firstName;

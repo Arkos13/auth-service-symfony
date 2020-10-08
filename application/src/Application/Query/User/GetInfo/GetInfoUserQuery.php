@@ -2,7 +2,9 @@
 
 namespace App\Application\Query\User\GetInfo;
 
-class GetInfoUserQuery
+use App\Application\Query\QueryInterface;
+
+class GetInfoUserQuery implements QueryInterface
 {
     private string $userId;
 

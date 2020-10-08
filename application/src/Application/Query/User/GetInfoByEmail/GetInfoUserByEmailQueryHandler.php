@@ -2,13 +2,13 @@
 
 namespace App\Application\Query\User\GetInfoByEmail;
 
+use App\Application\Query\QueryHandlerInterface;
 use App\Application\Query\User\DTO\UserDTO;
 use App\Model\User\Exception\UserNotExistsException;
 use App\Model\User\Repository\UserProfileRepositoryInterface;
 use App\Model\User\Repository\UserRepositoryInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class GetInfoUserByEmailQueryHandler implements MessageHandlerInterface
+class GetInfoUserByEmailQueryHandler implements QueryHandlerInterface
 {
     private UserProfileRepositoryInterface $userProfileRepository;
     private UserRepositoryInterface $userRepository;
@@ -20,7 +20,7 @@ class GetInfoUserByEmailQueryHandler implements MessageHandlerInterface
         $this->userRepository = $userRepository;
     }
 
-    public function __invoke(GetInfoUserByEmailQuery $query)
+    public function __invoke(GetInfoUserByEmailQuery $query): UserDTO
     {
         $user = $this->userRepository->findOneByEmail($query->getEmail());
         $userProfile = $user ? $this->userProfileRepository->findOneByUserId($user->getId()) : null;

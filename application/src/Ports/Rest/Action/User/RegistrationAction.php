@@ -2,28 +2,27 @@
 
 namespace App\Ports\Rest\Action\User;
 
+use App\Application\Command\CommandBusInterface;
 use App\Application\Command\User\Registration\RegistrationUserCommand;
 use App\Ports\Rest\Action\BaseAction;
+use Exception;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\Exception\HandlerFailedException;
-use Symfony\Component\Messenger\HandleTrait;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 use App\Ports\Rest\Request\User\RegistrationRequest;
 
 class RegistrationAction extends BaseAction
 {
-    use HandleTrait;
+    private CommandBusInterface $commandBus;
 
     public function __construct(SerializerInterface $serializer,
-                                MessageBusInterface $commandBus)
+                                CommandBusInterface $commandBus)
     {
         parent::__construct($serializer);
-        $this->messageBus = $commandBus;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -48,7 +47,7 @@ class RegistrationAction extends BaseAction
     {
         try {
             return $this->jsonResponse(
-                $this->handle(
+                $this->commandBus->handle(
                     new RegistrationUserCommand(
                         $registrationRequest->email,
                         $registrationRequest->firstName,
@@ -58,7 +57,7 @@ class RegistrationAction extends BaseAction
                     )
                 )
             );
-        } catch (HandlerFailedException $e) {
+        } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
     }

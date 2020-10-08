@@ -2,10 +2,10 @@
 
 namespace App\Application\Event\User\RegisteredViaNetwork;
 
+use App\Application\Event\EventHandlerInterface;
 use App\Application\Service\Mail\MailServiceInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class RegisteredUserViaNetworkEventHandler implements MessageHandlerInterface
+class RegisteredUserViaNetworkEventHandler implements EventHandlerInterface
 {
     private MailServiceInterface $mailerService;
 
@@ -14,7 +14,7 @@ class RegisteredUserViaNetworkEventHandler implements MessageHandlerInterface
         $this->mailerService = $mailerService;
     }
 
-    public function __invoke(RegisteredUserViaNetworkEvent $event)
+    public function __invoke(RegisteredUserViaNetworkEvent $event): void
     {
         $this->mailerService->sendEmail(
             $event->getEmail(),

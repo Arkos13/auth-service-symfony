@@ -2,28 +2,27 @@
 
 namespace App\Ports\Rest\Action\User\Password;
 
+use App\Application\Command\CommandBusInterface;
 use App\Application\Command\User\Password\Recovery\RecoveryPasswordCommand;
 use App\Ports\Rest\Action\BaseAction;
 use App\Ports\Rest\Request\User\RecoveryPasswordRequest;
+use Exception;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\Exception\HandlerFailedException;
-use Symfony\Component\Messenger\HandleTrait;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 
 class RecoveryPasswordAction extends BaseAction
 {
-    use HandleTrait;
+    private CommandBusInterface $commandBus;
 
-    public function __construct(SerializerInterface $serializer, MessageBusInterface $commandBus)
+    public function __construct(SerializerInterface $serializer, CommandBusInterface $commandBus)
     {
         parent::__construct($serializer);
-        $this->messageBus = $commandBus;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -49,14 +48,14 @@ class RecoveryPasswordAction extends BaseAction
     public function __invoke(RecoveryPasswordRequest $recoveryPasswordRequest, Request $request)
     {
         try {
-            $this->handle(
+            $this->commandBus->handle(
                 new RecoveryPasswordCommand(
                     $request->query->get("token"),
                     $recoveryPasswordRequest->password
                 )
             );
             return $this->jsonResponse(true);
-        } catch (HandlerFailedException $e) {
+        } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
     }

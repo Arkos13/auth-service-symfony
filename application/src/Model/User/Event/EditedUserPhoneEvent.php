@@ -2,7 +2,9 @@
 
 namespace App\Model\User\Event;
 
-class EditedUserPhoneEvent
+use App\Application\Event\EventInterface;
+
+class EditedUserPhoneEvent implements EventInterface
 {
     private const TYPE = "sync_phone";
 

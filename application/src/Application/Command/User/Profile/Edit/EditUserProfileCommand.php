@@ -2,9 +2,10 @@
 
 namespace App\Application\Command\User\Profile\Edit;
 
+use App\Application\Command\CommandInterface;
 use DateTimeImmutable;
 
-class EditUserProfileCommand
+class EditUserProfileCommand implements CommandInterface
 {
     private string $userId;
     private string $firstName;

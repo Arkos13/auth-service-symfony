@@ -121,7 +121,7 @@ class UserProfile
     }
 
     /**
-     * @return string[]
+     * @return array<mixed>
      */
     public static function getGenderValues(): array
     {

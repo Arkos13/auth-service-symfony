@@ -2,14 +2,14 @@
 
 namespace App\Application\Command\User\Email\SendChangeInvite;
 
+use App\Application\Command\CommandHandlerInterface;
 use App\Application\Service\Mail\MailServiceInterface;
 use App\Model\User\Exception\EmailInviteException;
 use App\Model\User\Repository\UserRepositoryInterface;
 use App\Model\User\Service\ConfirmEmailToken\Factory\ConfirmEmailTokenFactoryAbstract;
 use App\Model\User\Service\ConfirmEmailToken\Factory\Data as ConfirmEmailTokenFactoryData;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class SendChangeInviteCommandHandler implements MessageHandlerInterface
+class SendChangeInviteCommandHandler implements CommandHandlerInterface
 {
     private MailServiceInterface $mailService;
     private UserRepositoryInterface $userRepository;

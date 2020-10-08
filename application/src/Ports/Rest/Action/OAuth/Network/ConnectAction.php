@@ -2,6 +2,7 @@
 
 namespace App\Ports\Rest\Action\OAuth\Network;
 
+use App\Application\Command\CommandBusInterface;
 use App\Application\Command\User\RegistrationViaNetwork\RegistrationViaNetworkCommand;
 use App\Ports\Rest\Action\BaseAction;
 use App\Ports\Rest\Request\User\UserNetworkCheckRequest;
@@ -15,31 +16,28 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\HandleTrait;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 use Trikoder\Bundle\OAuth2Bundle\Controller\TokenController as TrikoderTokenController;
 
 class ConnectAction extends BaseAction
 {
-    use HandleTrait;
-
     private FetchUserInterface $fetchUser;
     private TrikoderTokenController $tokenController;
     private RequestStack $requestStack;
+    private CommandBusInterface $commandBus;
 
     public function __construct(SerializerInterface $serializer,
                                 FetchUserInterface $fetchUser,
                                 TrikoderTokenController $tokenController,
                                 RequestStack $requestStack,
-                                MessageBusInterface $commandBus)
+                                CommandBusInterface $commandBus)
     {
         parent::__construct($serializer);
         $this->fetchUser = $fetchUser;
         $this->tokenController = $tokenController;
         $this->requestStack = $requestStack;
-        $this->messageBus = $commandBus;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -77,7 +75,7 @@ class ConnectAction extends BaseAction
             );
 
             if (!$network) {
-                $this->handle(
+                $this->commandBus->handle(
                     new RegistrationViaNetworkCommand(
                         $request->email,
                         $request->firstName,

@@ -2,7 +2,9 @@
 
 namespace App\Application\Command\User\Password\SendInviteRecovery;
 
-class SendInviteRecoveryPasswordCommand
+use App\Application\Command\CommandInterface;
+
+class SendInviteRecoveryPasswordCommand implements CommandInterface
 {
     private string $email;
     private string $url;

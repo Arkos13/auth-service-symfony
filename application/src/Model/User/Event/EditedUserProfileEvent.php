@@ -2,7 +2,9 @@
 
 namespace App\Model\User\Event;
 
-class EditedUserProfileEvent
+use App\Application\Event\EventInterface;
+
+class EditedUserProfileEvent implements EventInterface
 {
     private const TYPE = "sync_user_profile";
 

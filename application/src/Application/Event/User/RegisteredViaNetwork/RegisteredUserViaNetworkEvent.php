@@ -2,7 +2,9 @@
 
 namespace App\Application\Event\User\RegisteredViaNetwork;
 
-class RegisteredUserViaNetworkEvent
+use App\Application\Event\EventInterface;
+
+class RegisteredUserViaNetworkEvent implements EventInterface
 {
     private string $email;
     private string $password;

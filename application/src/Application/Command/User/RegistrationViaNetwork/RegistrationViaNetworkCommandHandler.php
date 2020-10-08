@@ -2,6 +2,8 @@
 
 namespace App\Application\Command\User\RegistrationViaNetwork;
 
+use App\Application\Command\CommandHandlerInterface;
+use App\Application\Event\EventBusInterface;
 use App\Application\Event\User\RegisteredViaNetwork\RegisteredUserViaNetworkEvent;
 use App\Model\User\Entity\Network;
 use App\Model\User\Entity\User;
@@ -11,22 +13,20 @@ use App\Model\User\Repository\NetworkRepositoryInterface;
 use App\Model\User\Repository\UserProfileRepositoryInterface;
 use App\Model\User\Repository\UserRepositoryInterface;
 use App\Application\Service\PasswordHasher\PasswordHasherInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
-class RegistrationViaNetworkCommandHandler implements MessageHandlerInterface
+class RegistrationViaNetworkCommandHandler implements CommandHandlerInterface
 {
     private UserRepositoryInterface $userRepository;
     private UserProfileRepositoryInterface $userProfileRepository;
     private PasswordHasherInterface $passwordHasher;
     private NetworkRepositoryInterface $networkRepository;
-    private MessageBusInterface $eventBus;
+    private EventBusInterface $eventBus;
 
     public function __construct(UserRepositoryInterface $userRepository,
                                 UserProfileRepositoryInterface $userProfileRepository,
                                 PasswordHasherInterface $passwordHasher,
                                 NetworkRepositoryInterface $networkRepository,
-                                MessageBusInterface $eventBus)
+                                EventBusInterface $eventBus)
     {
         $this->userRepository = $userRepository;
         $this->userProfileRepository = $userProfileRepository;
@@ -35,7 +35,7 @@ class RegistrationViaNetworkCommandHandler implements MessageHandlerInterface
         $this->eventBus = $eventBus;
     }
 
-    public function __invoke(RegistrationViaNetworkCommand $command)
+    public function __invoke(RegistrationViaNetworkCommand $command): User
     {
         if ($this->checkExists($command->getEmail(), $command->getNetwork())) {
             throw new NetworkAlreadyExistsException();
@@ -78,10 +78,10 @@ class RegistrationViaNetworkCommandHandler implements MessageHandlerInterface
             )
         );
 
-        $this->eventBus->dispatch(
+        $this->eventBus->handle(
             new RegisteredUserViaNetworkEvent(
                 $user->getEmail(),
-                $randPassword
+                strval($randPassword)
             )
         );
 

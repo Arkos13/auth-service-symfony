@@ -2,7 +2,9 @@
 
 namespace App\Application\Query\User\GetInfoByEmail;
 
-class GetInfoUserByEmailQuery
+use App\Application\Query\QueryInterface;
+
+class GetInfoUserByEmailQuery implements QueryInterface
 {
     private string $email;
 

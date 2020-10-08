@@ -2,7 +2,9 @@
 
 namespace App\Application\Command\User\Phone\Edit;
 
-class EditPhoneCommand
+use App\Application\Command\CommandInterface;
+
+class EditPhoneCommand implements CommandInterface
 {
     private string $profileId;
     private string $phone;

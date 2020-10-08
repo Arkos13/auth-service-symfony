@@ -2,7 +2,9 @@
 
 namespace App\Application\Event\User\Registered;
 
-class RegisteredUserEvent
+use App\Application\Event\EventInterface;
+
+class RegisteredUserEvent implements EventInterface
 {
     private string $email;
     private string $url;

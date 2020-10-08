@@ -2,13 +2,13 @@
 
 namespace App\Application\Command\User\Password\Recovery;
 
+use App\Application\Command\CommandHandlerInterface;
 use App\Application\Service\PasswordHasher\PasswordHasherInterface;
 use App\Model\User\Exception\TokenExpiredException;
 use App\Model\User\Exception\UserConfirmationTokenNotFoundException;
 use App\Model\User\Repository\UserRepositoryInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class RecoveryPasswordCommandHandler implements MessageHandlerInterface
+class RecoveryPasswordCommandHandler implements CommandHandlerInterface
 {
     private UserRepositoryInterface $userRepository;
     private PasswordHasherInterface $passwordHasher;
@@ -20,7 +20,7 @@ class RecoveryPasswordCommandHandler implements MessageHandlerInterface
         $this->passwordHasher = $passwordHasher;
     }
 
-    public function __invoke(RecoveryPasswordCommand $command)
+    public function __invoke(RecoveryPasswordCommand $command): void
     {
         $user = $this->userRepository->findOneByConfirmationToken($command->getConfirmationToken());
 

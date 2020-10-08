@@ -2,7 +2,9 @@
 
 namespace App\Application\Command\User\Confirm;
 
-class ConfirmUserCommand
+use App\Application\Command\CommandInterface;
+
+class ConfirmUserCommand implements CommandInterface
 {
     private string $token;
 

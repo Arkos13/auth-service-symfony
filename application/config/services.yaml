@@ -25,26 +25,21 @@ services:
         resource: '../src/Ports/Rest/Action'
         tags: ['controller.service_arguments']
 
-    command_handlers:
-        namespace: App\Application\Command\
-        resource: '%kernel.project_dir%/src/Application/Command/*/*/*CommandHandler.php'
-        autoconfigure: false
-        tags:
-            - { name: messenger.message_handler, bus: command.bus }
+    _instanceof:
+        App\Application\Command\CommandHandlerInterface:
+            public: true
+            tags:
+                - { name: messenger.message_handler, bus: command.bus }
 
-    query_handlers:
-        namespace: App\Application\Query\
-        resource: '%kernel.project_dir%/src/Application/Query/*/*/*QueryHandler.php'
-        autoconfigure: false
-        tags:
-            - { name: messenger.message_handler, bus: query.bus }
+        App\Application\Query\QueryHandlerInterface:
+            public: true
+            tags:
+                - { name: messenger.message_handler, bus: query.bus }
 
-    event_handlers:
-        namespace: App\Application\Event\
-        resource: '%kernel.project_dir%/src/Application/Event/*/*/*EventHandler.php'
-        autoconfigure: false
-        tags:
-            - { name: messenger.message_handler, bus: event.bus }
+        App\Application\Event\EventHandlerInterface:
+            public: true
+            tags:
+                - { name: messenger.message_handler, bus: event.bus }
 
 ###################### Services ################################
     App\Application\Service\PasswordHasher\PasswordHasherInterface: '@App\Application\Service\PasswordHasher\PasswordHasherArgon2i'

@@ -2,26 +2,25 @@
 
 namespace App\Ports\Rest\Action\User;
 
+use App\Application\Command\CommandBusInterface;
 use App\Application\Command\User\Confirm\ConfirmUserCommand;
 use App\Ports\Rest\Action\BaseAction;
+use Exception;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\Exception\HandlerFailedException;
-use Symfony\Component\Messenger\HandleTrait;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 
 class UserConfirmAction extends BaseAction
 {
-    use HandleTrait;
+    private CommandBusInterface $commandBus;
 
-    public function __construct(SerializerInterface $serializer, MessageBusInterface $commandBus)
+    public function __construct(SerializerInterface $serializer, CommandBusInterface $commandBus)
     {
         parent::__construct($serializer);
-        $this->messageBus = $commandBus;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -39,13 +38,13 @@ class UserConfirmAction extends BaseAction
     public function __invoke(Request $request)
     {
         try {
-            $this->handle(
+            $this->commandBus->handle(
                 new ConfirmUserCommand(
                     $request->query->get("token")
                 )
             );
             return $this->jsonResponse(true);
-        } catch (HandlerFailedException $e) {
+        } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }
     }

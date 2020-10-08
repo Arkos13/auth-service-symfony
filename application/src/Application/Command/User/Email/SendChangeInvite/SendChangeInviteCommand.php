@@ -2,7 +2,9 @@
 
 namespace App\Application\Command\User\Email\SendChangeInvite;
 
-class SendChangeInviteCommand
+use App\Application\Command\CommandInterface;
+
+class SendChangeInviteCommand implements CommandInterface
 {
     private string $email;
     private string $newEmail;

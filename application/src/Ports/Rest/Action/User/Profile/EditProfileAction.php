@@ -2,6 +2,7 @@
 
 namespace App\Ports\Rest\Action\User\Profile;
 
+use App\Application\Command\CommandBusInterface;
 use App\Application\Command\User\Profile\Edit\EditUserProfileCommand;
 use App\Ports\Rest\Action\BaseAction;
 use App\Ports\Rest\Request\User\Profile\UserProfileEditRequest;
@@ -10,20 +11,18 @@ use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\HandleTrait;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 use App\Model\User\Entity\UserProfile;
 
 class EditProfileAction extends BaseAction
 {
-    use HandleTrait;
+    private CommandBusInterface $commandBus;
 
-    public function __construct(SerializerInterface $serializer, MessageBusInterface $commandBus)
+    public function __construct(SerializerInterface $serializer, CommandBusInterface $commandBus)
     {
         parent::__construct($serializer);
-        $this->messageBus = $commandBus;
+        $this->commandBus = $commandBus;
     }
 
     /**
@@ -48,7 +47,7 @@ class EditProfileAction extends BaseAction
     {
         try {
             return $this->jsonResponse(
-                $this->handle(
+                $this->commandBus->handle(
                     new EditUserProfileCommand(
                         $this->getCurrentUser()->getId(),
                         $userProfileEditRequest->firstName,

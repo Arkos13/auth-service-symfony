@@ -2,7 +2,9 @@
 
 namespace App\Model\User\Event;
 
-class EditedUserEmailEvent
+use App\Application\Event\EventInterface;
+
+class EditedUserEmailEvent implements EventInterface
 {
     private const TYPE = "sync_email";
 

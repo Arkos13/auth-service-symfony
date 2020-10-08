@@ -2,7 +2,9 @@
 
 namespace App\Application\Command\User\Email\ConfirmUserByEmail;
 
-class ConfirmUserByEmailCommand
+use App\Application\Command\CommandInterface;
+
+class ConfirmUserByEmailCommand implements CommandInterface
 {
     private string $token;
 

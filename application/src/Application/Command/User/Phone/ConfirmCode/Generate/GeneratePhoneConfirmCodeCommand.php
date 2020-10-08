@@ -2,7 +2,9 @@
 
 namespace App\Application\Command\User\Phone\ConfirmCode\Generate;
 
-class GeneratePhoneConfirmCodeCommand
+use App\Application\Command\CommandInterface;
+
+class GeneratePhoneConfirmCodeCommand implements CommandInterface
 {
     private string $userId;
     private string $phone;

@@ -2,23 +2,23 @@
 
 namespace App\Application\Command\User\Email\ConfirmUserByEmail;
 
+use App\Application\Command\CommandHandlerInterface;
+use App\Application\Event\EventBusInterface;
 use App\Model\User\Event\EditedUserEmailEvent;
 use App\Model\User\Exception\ConfirmEmailTokenNotFoundException;
 use App\Model\User\Exception\TokenExpiredException;
 use App\Model\User\Repository\ConfirmEmailTokenRepositoryInterface;
 use App\Model\User\Repository\UserRepositoryInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
-class ConfirmUserByEmailCommandHandler implements MessageHandlerInterface
+class ConfirmUserByEmailCommandHandler implements CommandHandlerInterface
 {
     private ConfirmEmailTokenRepositoryInterface $confirmEmailTokenRepository;
     private UserRepositoryInterface $userRepository;
-    private MessageBusInterface $eventBus;
+    private EventBusInterface $eventBus;
 
     public function __construct(ConfirmEmailTokenRepositoryInterface $confirmEmailTokenRepository,
                                 UserRepositoryInterface $userRepository,
-                                MessageBusInterface $eventBus)
+                                EventBusInterface $eventBus)
     {
         $this->confirmEmailTokenRepository = $confirmEmailTokenRepository;
         $this->userRepository = $userRepository;
@@ -48,6 +48,6 @@ class ConfirmUserByEmailCommandHandler implements MessageHandlerInterface
 
         $this->confirmEmailTokenRepository->remove($confirmEmailToken);
 
-        $this->eventBus->dispatch($event);
+        $this->eventBus->handle($event);
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Application\Command\User\Password\Recovery;
 
-class RecoveryPasswordCommand
+use App\Application\Command\CommandInterface;
+
+class RecoveryPasswordCommand implements CommandInterface
 {
     private string $confirmationToken;
     private string $password;

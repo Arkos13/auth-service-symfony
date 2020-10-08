@@ -2,15 +2,15 @@
 
 namespace App\Application\Command\User\Phone\ConfirmCode\Generate;
 
+use App\Application\Command\CommandHandlerInterface;
 use App\Application\Service\Sms\SmsInterface;
 use App\Model\User\Entity\PhoneConfirmCode;
 use App\Model\User\Repository\PhoneConfirmCodeRepositoryInterface;
 use App\Model\User\Repository\UserRepositoryInterface;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityNotFoundException;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class GeneratePhoneConfirmCodeCommandHandler implements MessageHandlerInterface
+class GeneratePhoneConfirmCodeCommandHandler implements CommandHandlerInterface
 {
     private UserRepositoryInterface $userRepository;
     private PhoneConfirmCodeRepositoryInterface $repository;

@@ -2,29 +2,28 @@
 
 namespace App\Ports\Rest\Action\User;
 
+use App\Application\Query\QueryBusInterface;
 use App\Application\Query\User\GetInfoByEmail\GetInfoUserByEmailQuery;
 use App\Application\Query\User\DTO\UserDTO;
 use App\Ports\Rest\Action\BaseAction;
+use Exception;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\Exception\HandlerFailedException;
-use Symfony\Component\Messenger\HandleTrait;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
 
 class CheckExistsAction extends BaseAction
 {
-    use HandleTrait;
+    private QueryBusInterface $queryBus;
 
     public function __construct(SerializerInterface $serializer,
-                                MessageBusInterface $queryBus)
+                                QueryBusInterface $queryBus)
     {
         parent::__construct($serializer);
-        $this->messageBus = $queryBus;
+        $this->queryBus = $queryBus;
     }
 
     /**
@@ -46,13 +45,13 @@ class CheckExistsAction extends BaseAction
         }
         try {
             return $this->jsonResponse(
-                $this->handle(
+                $this->queryBus->ask(
                     new GetInfoUserByEmailQuery(
                         $request->query->get('email')
                     )
                 )
             );
-        } catch (HandlerFailedException $e) {
+        } catch (Exception $e) {
             return $this->jsonResponse(false);
         }
     }

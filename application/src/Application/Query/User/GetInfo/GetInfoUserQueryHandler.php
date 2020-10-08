@@ -2,13 +2,13 @@
 
 namespace App\Application\Query\User\GetInfo;
 
+use App\Application\Query\QueryHandlerInterface;
 use App\Application\Query\User\DTO\UserDTO;
 use App\Model\User\Exception\UserNotExistsException;
 use App\Model\User\Repository\UserProfileRepositoryInterface;
 use App\Model\User\Repository\UserRepositoryInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class GetInfoUserQueryHandler implements MessageHandlerInterface
+class GetInfoUserQueryHandler implements QueryHandlerInterface
 {
     private UserProfileRepositoryInterface $userProfileRepository;
     private UserRepositoryInterface $userRepository;

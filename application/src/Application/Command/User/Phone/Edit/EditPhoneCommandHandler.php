@@ -2,18 +2,18 @@
 
 namespace App\Application\Command\User\Phone\Edit;
 
+use App\Application\Command\CommandHandlerInterface;
+use App\Application\Event\EventBusInterface;
 use App\Model\User\Event\EditedUserPhoneEvent;
 use App\Model\User\Repository\UserProfileRepositoryInterface;
 use Doctrine\ORM\EntityNotFoundException;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
-class EditPhoneCommandHandler implements MessageHandlerInterface
+class EditPhoneCommandHandler implements CommandHandlerInterface
 {
     private UserProfileRepositoryInterface $userProfileRepository;
-    private MessageBusInterface $eventBus;
+    private EventBusInterface $eventBus;
 
-    public function __construct(UserProfileRepositoryInterface $userProfileRepository, MessageBusInterface $eventBus)
+    public function __construct(UserProfileRepositoryInterface $userProfileRepository, EventBusInterface $eventBus)
     {
         $this->userProfileRepository = $userProfileRepository;
         $this->eventBus = $eventBus;
@@ -32,7 +32,7 @@ class EditPhoneCommandHandler implements MessageHandlerInterface
         $profile->setPhone($command->getPhone());
         $this->userProfileRepository->add($profile);
 
-        $this->eventBus->dispatch(new EditedUserPhoneEvent($profile->getUser()->getEmail(), $command->getPhone()));
+        $this->eventBus->handle(new EditedUserPhoneEvent($profile->getUser()->getEmail(), $command->getPhone()));
 
     }
 }

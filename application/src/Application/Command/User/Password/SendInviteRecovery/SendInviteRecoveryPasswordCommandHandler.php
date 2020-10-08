@@ -2,13 +2,13 @@
 
 namespace App\Application\Command\User\Password\SendInviteRecovery;
 
+use App\Application\Command\CommandHandlerInterface;
 use App\Application\Service\Mail\MailServiceInterface;
 use App\Model\User\Exception\EmailInviteException;
 use App\Model\User\Repository\UserRepositoryInterface;
 use App\Model\User\Service\Token\TokenGeneratorInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class SendInviteRecoveryPasswordCommandHandler implements MessageHandlerInterface
+class SendInviteRecoveryPasswordCommandHandler implements CommandHandlerInterface
 {
     private UserRepositoryInterface $userRepository;
     private TokenGeneratorInterface $tokenGenerator;
@@ -23,7 +23,7 @@ class SendInviteRecoveryPasswordCommandHandler implements MessageHandlerInterfac
         $this->mailService = $mailService;
     }
 
-    public function __invoke(SendInviteRecoveryPasswordCommand $command)
+    public function __invoke(SendInviteRecoveryPasswordCommand $command): void
     {
         $user = $this->userRepository->findOneByEmail($command->getEmail());
 

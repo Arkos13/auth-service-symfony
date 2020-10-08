@@ -28,7 +28,7 @@ abstract class ConfirmEmailTokenFactoryAbstract
         return $confirmEmailToken;
     }
 
-    protected function checkValidConfirmToken($data): ?ConfirmEmailToken
+    protected function checkValidConfirmToken(Data $data): ?ConfirmEmailToken
     {
         if (($confirmEmailToken = $this->checkExistsConfirmToken($data))
             && $confirmEmailToken->isValidExpiresToken()) {
