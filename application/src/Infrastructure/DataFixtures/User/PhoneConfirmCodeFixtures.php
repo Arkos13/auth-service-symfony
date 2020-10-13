@@ -21,7 +21,7 @@ class PhoneConfirmCodeFixtures extends Fixture implements OrderedFixtureInterfac
                 "user" => $this->getReference(UserFixtures::USER_TEST),
                 "code" => self::CODE_TEST,
                 "phone" => "12345670",
-                "expiresAt" => new DateTimeImmutable("+10 minutes")
+                "expiresAt" => new DateTimeImmutable("+1 year")
             ],
             [
                 "user" => $this->getReference(UserFixtures::USER_TEST),

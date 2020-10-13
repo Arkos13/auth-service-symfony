@@ -18,13 +18,13 @@ class ConfirmEmailTokenFixtures extends Fixture implements OrderedFixtureInterfa
                 "confirmationEmailToken" => "123",
                 "email" => "test2@gmail.com",
                 "user" => $this->getReference(UserFixtures::USER_TEST),
-                "expires" => (new DateTimeImmutable())->modify("+2 hour")
+                "expires" => (new DateTimeImmutable())->modify("+2 year")
             ],
             [
                 "confirmationEmailToken" => "1237",
                 "email" => "test2@gmail.com",
                 "user" => $this->getReference(UserFixtures::USER_BLOCKED_TEST),
-                "expires" => (new DateTimeImmutable())->modify("+2 hour")
+                "expires" => (new DateTimeImmutable())->modify("+2 year")
             ]
         ];
         foreach ($arrayTokens as $key => $item) {
