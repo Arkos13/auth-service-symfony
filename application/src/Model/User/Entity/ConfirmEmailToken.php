@@ -37,7 +37,7 @@ class ConfirmEmailToken
     /**
      *  @ORM\Column(type="datetime_immutable")
      */
-    private ?DateTimeImmutable $expires = null;
+    private DateTimeImmutable $expires;
 
     private function __construct(User $user,
                                 string $email,
@@ -84,7 +84,7 @@ class ConfirmEmailToken
         return $this->user;
     }
 
-    public function getExpires(): ?DateTimeImmutable
+    public function getExpires(): DateTimeImmutable
     {
         return $this->expires;
     }

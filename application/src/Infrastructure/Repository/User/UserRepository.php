@@ -5,6 +5,7 @@ namespace App\Infrastructure\Repository\User;
 use App\Model\User\Entity\User;
 use App\Model\User\Repository\UserRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -46,5 +47,19 @@ class UserRepository extends ServiceEntityRepository implements UserRepositoryIn
     {
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param string $id
+     * @return User
+     * @throws EntityNotFoundException
+     */
+    public function getOneById(string $id): User
+    {
+        if (!($user = $this->findOneById($id))) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        return $user;
     }
 }

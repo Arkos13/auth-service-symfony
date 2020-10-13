@@ -6,7 +6,6 @@ use App\Application\Command\CommandHandlerInterface;
 use App\Application\Event\EventBusInterface;
 use App\Model\User\Event\EditedUserPhoneEvent;
 use App\Model\User\Repository\UserProfileRepositoryInterface;
-use Doctrine\ORM\EntityNotFoundException;
 
 class EditPhoneCommandHandler implements CommandHandlerInterface
 {
@@ -19,15 +18,9 @@ class EditPhoneCommandHandler implements CommandHandlerInterface
         $this->eventBus = $eventBus;
     }
 
-    /**
-     * @param EditPhoneCommand $command
-     * @throws EntityNotFoundException
-     */
     public function __invoke(EditPhoneCommand $command): void
     {
-        if (!($profile = $this->userProfileRepository->findOneByUserId($command->getProfileId()))) {
-            throw new EntityNotFoundException("Profile not found");
-        }
+        $profile = $this->userProfileRepository->getOneByUserId($command->getProfileId());
 
         $profile->setPhone($command->getPhone());
         $this->userProfileRepository->add($profile);

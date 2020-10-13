@@ -2,10 +2,11 @@
 
 namespace App\Model\User\Event;
 
+use App\Application\Event\EventInterface;
 use App\Model\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
-class UserAuthenticatedHistoryEvent extends Event
+class UserAuthenticatedHistoryEvent extends Event implements EventInterface
 {
     const NAME = "user.authenticated.history";
 

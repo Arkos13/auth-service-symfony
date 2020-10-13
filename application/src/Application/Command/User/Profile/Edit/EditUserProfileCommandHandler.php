@@ -7,7 +7,6 @@ use App\Application\Event\EventBusInterface;
 use App\Model\User\Entity\UserProfile;
 use App\Model\User\Event\EditedUserProfileEvent;
 use App\Model\User\Repository\UserProfileRepositoryInterface;
-use Doctrine\ORM\EntityNotFoundException;
 
 class EditUserProfileCommandHandler implements CommandHandlerInterface
 {
@@ -21,16 +20,9 @@ class EditUserProfileCommandHandler implements CommandHandlerInterface
         $this->eventBus = $eventBus;
     }
 
-    /**
-     * @param EditUserProfileCommand $command
-     * @return UserProfile
-     * @throws EntityNotFoundException
-     */
     public function __invoke(EditUserProfileCommand $command): UserProfile
     {
-        if (!($userProfile = $this->userProfileRepository->findOneByUserId($command->getUserId()))) {
-            throw new EntityNotFoundException("User not found");
-        }
+        $userProfile = $this->userProfileRepository->getOneByUserId($command->getUserId());
 
         $userProfile->setFirstName($command->getFirstName());
         $userProfile->setLastName($command->getLastName());

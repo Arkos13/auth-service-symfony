@@ -8,7 +8,6 @@ use App\Model\User\Entity\PhoneConfirmCode;
 use App\Model\User\Repository\PhoneConfirmCodeRepositoryInterface;
 use App\Model\User\Repository\UserRepositoryInterface;
 use DateTimeImmutable;
-use Doctrine\ORM\EntityNotFoundException;
 
 class GeneratePhoneConfirmCodeCommandHandler implements CommandHandlerInterface
 {
@@ -25,15 +24,9 @@ class GeneratePhoneConfirmCodeCommandHandler implements CommandHandlerInterface
         $this->smsService = $smsService;
     }
 
-    /**
-     * @param GeneratePhoneConfirmCodeCommand $command
-     * @throws EntityNotFoundException
-     */
     public function __invoke(GeneratePhoneConfirmCodeCommand $command): void
     {
-        if (!($user = $this->userRepository->findOneById($command->getUserId()))) {
-            throw new EntityNotFoundException("User not found");
-        }
+        $user = $this->userRepository->getOneById($command->getUserId());
 
         $code = rand(1000, 9999);
 

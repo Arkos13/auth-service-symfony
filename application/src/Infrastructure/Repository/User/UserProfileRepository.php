@@ -5,6 +5,7 @@ namespace App\Infrastructure\Repository\User;
 use App\Model\User\Entity\UserProfile;
 use App\Model\User\Repository\UserProfileRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
@@ -41,5 +42,19 @@ class UserProfileRepository extends ServiceEntityRepository implements UserProfi
     {
         $this->getEntityManager()->persist($userProfile);
         $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param string $userId
+     * @return UserProfile
+     * @throws EntityNotFoundException
+     */
+    public function getOneByUserId(string $userId): UserProfile
+    {
+        if (!($userProfile = $this->findOneByUserId($userId))) {
+            throw new EntityNotFoundException("User profile not found");
+        }
+
+        return $userProfile;
     }
 }

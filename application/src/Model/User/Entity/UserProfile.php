@@ -30,13 +30,13 @@ class UserProfile
      * @ORM\Column(type="string")
      * @Serializer\SerializedName("firstName")
      */
-    private string $firstName = "";
+    private string $firstName;
 
     /**
      * @ORM\Column(type="string")
      * @Serializer\SerializedName("lastName")
      */
-    private string $lastName = "";
+    private string $lastName;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
