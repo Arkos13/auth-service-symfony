@@ -52,10 +52,10 @@ final class UserResolveListener
 
         $request = $this->requestStack->getCurrentRequest();
 
-        if ($this->checkRequestNetwork($request) && !($network = $this->validateNetwork(
+        if ($request && $this->checkRequestNetwork($request) && !($network = $this->validateNetwork(
                 $event->getUsername(),
-                $request->request->get("networkAccessToken"),
-                $request->request->get("provider"))
+                $request->request->get("networkAccessToken") ?? "",
+                $request->request->get("provider") ?? "")
             )
         ) {
             throw new UnauthorizedHttpException('Invalid network', 'Invalid network');
@@ -65,7 +65,7 @@ final class UserResolveListener
             throw new UnauthorizedHttpException('Invalid password', 'Invalid password');
         }
 
-        if ($request->getClientIp()) {
+        if ($request && $request->getClientIp()) {
             $this->eventDispatcher->dispatch(
                 new UserAuthenticatedHistoryEvent($user, $request->getClientIp(), $request->get("guid")),
                 UserAuthenticatedHistoryEvent::NAME

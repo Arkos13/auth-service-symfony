@@ -92,6 +92,9 @@ class FakeClientRegistry implements ClientRegistryInterface
                 };
             }
 
+            /**
+             *  @psalm-suppress InvalidNullableReturnType
+            */
             public function getOAuth2Provider(): ?AbstractProvider
             {
                 return null;

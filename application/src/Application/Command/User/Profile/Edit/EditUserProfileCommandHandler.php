@@ -36,7 +36,9 @@ class EditUserProfileCommandHandler implements CommandHandlerInterface
                 $userProfile->getFirstName(),
                 $userProfile->getLastName(),
                 $userProfile->getGender(),
-                $userProfile->getBirthday()->format('Y-m-d H:i:s')
+                $userProfile->getBirthday()
+                    ? $userProfile->getBirthday()->format('Y-m-d H:i:s')
+                    : null
             )
         );
 

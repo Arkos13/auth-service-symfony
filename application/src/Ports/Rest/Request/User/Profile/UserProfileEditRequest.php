@@ -37,9 +37,11 @@ class UserProfileEditRequest implements RequestDtoInterface
     {
         $this->firstName = $request->request->get('firstName') ?? "";
         $this->lastName = $request->request->get('lastName') ?? "";
-        $this->birthday = $request->request->get('birthday')
-            ? new DateTimeImmutable($request->request->get('birthday'))
-            : null;
         $this->gender = $request->request->get('gender');
+
+        $birthday = $request->request->get('birthday');
+        $this->birthday = $birthday
+            ? new DateTimeImmutable($birthday)
+            : null;
     }
 }

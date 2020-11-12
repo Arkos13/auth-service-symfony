@@ -6,6 +6,7 @@ use App\Model\User\Entity\User;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 abstract class BaseAction extends AbstractController
 {
@@ -16,10 +17,13 @@ abstract class BaseAction extends AbstractController
         $this->serializer = $serializer;
     }
 
-    public function getCurrentUser(): ?User
+    public function getCurrentUser(): User
     {
+        if (is_null($user = $this->getUser())) {
+            throw new UnauthorizedHttpException("User does not unauthorized");
+        }
+
         /** @var User $user */
-        $user = $this->getUser();
         return $user;
     }
 

@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Webmozart\Assert\Assert;
 
 class RequestDtoResolver implements ArgumentValueResolverInterface
 {
@@ -21,6 +22,10 @@ class RequestDtoResolver implements ArgumentValueResolverInterface
 
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
+        if (is_null($argument->getType())) {
+            return false;
+        }
+
         return is_subclass_of($argument->getType(), RequestDtoInterface::class);
     }
 
@@ -32,6 +37,7 @@ class RequestDtoResolver implements ArgumentValueResolverInterface
     public function resolve(Request $request, ArgumentMetadata $argument)
     {
         $class = $argument->getType();
+        Assert::classExists($class);
         $dto = new $class($request);
         $errors = $this->validator->validate($dto);
         if (count($errors) > 0) {

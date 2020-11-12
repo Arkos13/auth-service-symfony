@@ -22,12 +22,6 @@ class UserProfileVoter extends Voter
         return in_array($attribute, [self::EDIT_PHONE]) && is_string($subject);
     }
 
-    /**
-     * @param string $attribute
-     * @param string $subject
-     * @param TokenInterface $token
-     * @return bool
-     */
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token)
     {
         switch ($attribute) {

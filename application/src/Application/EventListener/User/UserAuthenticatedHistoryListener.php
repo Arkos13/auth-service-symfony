@@ -5,9 +5,8 @@ namespace App\Application\EventListener\User;
 use App\Model\User\Entity\Security\HistoryAuth;
 use App\Model\User\Event\UserAuthenticatedHistoryEvent;
 use App\Model\User\Repository\HistoryAuthRepositoryInterface;
+use Exception;
 use GeoIp2\Database\Reader;
-use GeoIp2\Exception\AddressNotFoundException;
-use MaxMind\Db\Reader\InvalidDatabaseException;
 use Psr\Log\LoggerInterface;
 
 class UserAuthenticatedHistoryListener
@@ -29,21 +28,29 @@ class UserAuthenticatedHistoryListener
     {
         try {
             $geo = $this->geoDatabaseReader->city($event->getIp());
-            $this->historyAuthRepository->add(
-                HistoryAuth::create(
-                    $event->getUser(),
-                    $geo->city->name,
-                    $geo->country->isoCode,
-                    $geo->country->name,
-                    $geo->mostSpecificSubdivision->name,
-                    $event->getIp(),
-                    $event->getGuid()
-                )
+            $historyAuth = HistoryAuth::create(
+                $event->getUser(),
+                $geo->city->name,
+                $geo->country->isoCode,
+                $geo->country->name,
+                $geo->mostSpecificSubdivision->name,
+                $event->getIp(),
+                $event->getGuid()
             );
-        } catch (AddressNotFoundException $e) {
+        } catch (Exception $e) {
             $this->logger->error("Geo exception - {$e->getMessage()}");
-        } catch (InvalidDatabaseException $e) {
-            $this->logger->error("Geo exception - {$e->getMessage()}");
+
+            $historyAuth = HistoryAuth::create(
+                $event->getUser(),
+                null,
+                null,
+                null,
+                null,
+                $event->getIp(),
+                $event->getGuid()
+            );
         }
+
+        $this->historyAuthRepository->add($historyAuth);
     }
 }

@@ -42,11 +42,16 @@ delete-migrations:
 
 setup-db-test: schema-drop delete-migrations migrate load-fixtures
 
-run-tests:
-	docker exec auth-service-php-fpm php bin/phpunit
-
 docker-analyse-phpstan:
 	docker exec auth-service-php-fpm php vendor/bin/phpstan analyse -c phpstan.neon
 
+docker-analyse-psalm:
+	docker exec auth-service-php-fpm php vendor/bin/psalm
+
+docker-run-test:
+	docker exec auth-service-php-fpm php bin/phpunit
+
+docker-run-test-and-analyse-code: setup-db-test docker-run-test docker-analyse-phpstan docker-analyse-psalm
+
 docker-messenger-consume:
-	docker exec auth-service-market-php-fpm php bin/console messenger:consume event -vv --time-limit=3600
+	docker exec auth-service-php-fpm php bin/console messenger:consume event -vv --time-limit=3600

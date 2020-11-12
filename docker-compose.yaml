@@ -24,16 +24,16 @@ services:
     networks:
       - internal
   auth-service-postgres:
-    image: postgres:12-alpine
+    image: postgres:13
     container_name: auth-service-postgres
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - ./postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: app
     ports:
-      - "54322:5432"
+      - "5432:5432"
     networks:
       - internal
   auth-service-mailer:
@@ -57,7 +57,6 @@ services:
       - internal
 volumes:
   composer:
-  postgres-data:
 networks:
   internal:
     driver: bridge

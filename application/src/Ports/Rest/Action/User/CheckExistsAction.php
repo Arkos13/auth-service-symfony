@@ -40,14 +40,15 @@ class CheckExistsAction extends BaseAction
      */
     public function __invoke(Request $request)
     {
-        if(!$request->query->get('email')) {
+        if(!($email = $request->query->get('email'))) {
             throw new BadRequestHttpException('Email is not specified');
         }
+
         try {
             return $this->jsonResponse(
                 $this->queryBus->ask(
                     new GetInfoUserByEmailQuery(
-                        $request->query->get('email')
+                        $email
                     )
                 )
             );

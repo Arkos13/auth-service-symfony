@@ -104,6 +104,10 @@ class User implements UserInterface
 
     public function isValidExpiresConfirmationToken(): bool
     {
+        if (!$this->getExpiresConfirmationToken()) {
+            return false;
+        }
+
         return $this->getExpiresConfirmationToken()->getTimestamp() >= (new DateTimeImmutable())->getTimestamp();
     }
 

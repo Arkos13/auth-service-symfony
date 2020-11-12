@@ -50,7 +50,7 @@ class RecoveryPasswordAction extends BaseAction
         try {
             $this->commandBus->handle(
                 new RecoveryPasswordCommand(
-                    $request->query->get("token"),
+                    $request->query->get("token") ?? "",
                     $recoveryPasswordRequest->password
                 )
             );

@@ -40,7 +40,7 @@ class UserConfirmAction extends BaseAction
         try {
             $this->commandBus->handle(
                 new ConfirmUserCommand(
-                    $request->query->get("token")
+                    $request->query->get("token") ?? ""
                 )
             );
             return $this->jsonResponse(true);

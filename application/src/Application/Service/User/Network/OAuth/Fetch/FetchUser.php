@@ -6,6 +6,7 @@ use App\Model\User\Entity\Network;
 use App\Model\User\Repository\NetworkRepositoryInterface;
 use App\Application\Service\OAuth\Client\Registry\ClientRegistryInterface;
 use League\OAuth2\Client\Token\AccessToken;
+use Webmozart\Assert\Assert;
 
 class FetchUser implements FetchUserInterface
 {
@@ -19,12 +20,10 @@ class FetchUser implements FetchUserInterface
         $this->networkRepository = $networkRepository;
     }
 
-    /**
-     * @param FetchUserData $data
-     * @return Network|null
-     */
     public function fetch($data): ?Network
     {
+        Assert::isInstanceOf($data, FetchUserData::class);
+
         $client = $this->clientRegistry->getClient($data->network);
 
         $user = $client->fetchUserFromToken(new AccessToken([

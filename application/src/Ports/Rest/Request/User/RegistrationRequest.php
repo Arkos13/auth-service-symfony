@@ -48,7 +48,7 @@ class RegistrationRequest implements RequestDtoInterface
 
     public function __construct(Request $request)
     {
-        $this->email = strtolower($request->request->get('email')) ?? "";
+        $this->email = strtolower($request->request->get('email') ?? "");
         $this->firstName = $request->request->get('firstName') ?? "";
         $this->lastName = $request->request->get('lastName') ?? "";
         $this->url = $request->request->get('url') ?? "";
