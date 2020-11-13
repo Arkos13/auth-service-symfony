@@ -4,6 +4,8 @@ namespace App\Ports\Rest\Action\User\Profile;
 
 use App\Application\Command\CommandBusInterface;
 use App\Application\Command\User\Profile\Edit\EditUserProfileCommand;
+use App\Application\Query\QueryBusInterface;
+use App\Application\Query\User\GetProfileById\GetProfileByIdQuery;
 use App\Ports\Rest\Action\BaseAction;
 use App\Ports\Rest\Request\User\Profile\UserProfileEditRequest;
 use Exception;
@@ -18,11 +20,15 @@ use App\Model\User\Entity\UserProfile;
 class EditProfileAction extends BaseAction
 {
     private CommandBusInterface $commandBus;
+    private QueryBusInterface $queryBus;
 
-    public function __construct(SerializerInterface $serializer, CommandBusInterface $commandBus)
+    public function __construct(SerializerInterface $serializer,
+                                CommandBusInterface $commandBus,
+                                QueryBusInterface $queryBus)
     {
         parent::__construct($serializer);
         $this->commandBus = $commandBus;
+        $this->queryBus = $queryBus;
     }
 
     /**
@@ -46,16 +52,18 @@ class EditProfileAction extends BaseAction
     public function __invoke(UserProfileEditRequest $userProfileEditRequest)
     {
         try {
-            return $this->jsonResponse(
-                $this->commandBus->handle(
-                    new EditUserProfileCommand(
-                        $this->getCurrentUser()->getId(),
-                        $userProfileEditRequest->firstName,
-                        $userProfileEditRequest->lastName,
-                        $userProfileEditRequest->birthday,
-                        $userProfileEditRequest->gender
-                    )
+            $this->commandBus->handle(
+                new EditUserProfileCommand(
+                    $this->getCurrentUser()->getId(),
+                    $userProfileEditRequest->firstName,
+                    $userProfileEditRequest->lastName,
+                    $userProfileEditRequest->birthday,
+                    $userProfileEditRequest->gender
                 )
+            );
+
+            return $this->jsonResponse(
+                $this->queryBus->ask(new GetProfileByIdQuery($this->getCurrentUser()->getId()))
             );
         } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);

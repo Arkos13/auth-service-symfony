@@ -35,7 +35,7 @@ class RegistrationViaNetworkCommandHandler implements CommandHandlerInterface
         $this->eventBus = $eventBus;
     }
 
-    public function __invoke(RegistrationViaNetworkCommand $command): User
+    public function __invoke(RegistrationViaNetworkCommand $command): void
     {
         if ($this->checkExists($command->getEmail(), $command->getNetwork())) {
             throw new NetworkAlreadyExistsException();
@@ -50,7 +50,7 @@ class RegistrationViaNetworkCommandHandler implements CommandHandlerInterface
                     $command->getNetworkAccessToken()
                 )
             );
-            return $user;
+            return;
         }
 
         $randPassword = rand(100000, 999999);
@@ -84,8 +84,6 @@ class RegistrationViaNetworkCommandHandler implements CommandHandlerInterface
                 strval($randPassword)
             )
         );
-
-        return $user;
     }
 
     private function getUserExists(string $email): ?User

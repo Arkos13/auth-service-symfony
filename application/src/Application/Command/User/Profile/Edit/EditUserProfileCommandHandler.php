@@ -4,7 +4,6 @@ namespace App\Application\Command\User\Profile\Edit;
 
 use App\Application\Command\CommandHandlerInterface;
 use App\Application\Event\EventBusInterface;
-use App\Model\User\Entity\UserProfile;
 use App\Model\User\Event\EditedUserProfileEvent;
 use App\Model\User\Repository\UserProfileRepositoryInterface;
 
@@ -20,7 +19,7 @@ class EditUserProfileCommandHandler implements CommandHandlerInterface
         $this->eventBus = $eventBus;
     }
 
-    public function __invoke(EditUserProfileCommand $command): UserProfile
+    public function __invoke(EditUserProfileCommand $command): void
     {
         $userProfile = $this->userProfileRepository->getOneByUserId($command->getUserId());
 
@@ -41,8 +40,6 @@ class EditUserProfileCommandHandler implements CommandHandlerInterface
                     : null
             )
         );
-
-        return $userProfile;
     }
 
 

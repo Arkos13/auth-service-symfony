@@ -30,7 +30,7 @@ class RegistrationUserCommandHandler implements CommandHandlerInterface
         $this->eventBus = $eventBus;
     }
 
-    public function __invoke(RegistrationUserCommand $command): User
+    public function __invoke(RegistrationUserCommand $command): void
     {
         if ($this->checkExistsEmail($command->getEmail())) {
             throw new EmailExistsException("This email already exists.");
@@ -56,8 +56,6 @@ class RegistrationUserCommandHandler implements CommandHandlerInterface
                 $command->getUrl()
             )
         );
-
-        return $user;
     }
 
     private function checkExistsEmail(string $email): bool

@@ -94,6 +94,7 @@ class FakeClientRegistry implements ClientRegistryInterface
 
             /**
              *  @psalm-suppress InvalidNullableReturnType
+             *  @psalm-suppress NullableReturnStatement
             */
             public function getOAuth2Provider(): ?AbstractProvider
             {
