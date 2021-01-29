@@ -2,13 +2,14 @@
 
 namespace App\Model\User\Entity;
 
-use App\Application\Service\Uuid\UuidService;
+use App\Model\Shared\Entity\Id;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="user_profile_phone_confirm_codes")
  * @ORM\Entity()
+ * @psalm-immutable
  */
 class PhoneConfirmCode
 {
@@ -16,28 +17,28 @@ class PhoneConfirmCode
      * @ORM\Id()
      * @ORM\Column(type="uuid", unique=true)
      */
-    private string $id;
+    public string $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Model\User\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    private User $user;
+    public User $user;
 
     /**
      * @ORM\Column(name="code", type="integer")
      */
-    private int $code;
+    public int $code;
 
     /**
      * @ORM\Column(name="expires_at", type="datetime_immutable")
      */
-    private DateTimeImmutable $expiresAt;
+    public DateTimeImmutable $expiresAt;
 
     /**
      * @ORM\Column(type="string", length=50)U
      */
-    private string $phone;
+    public string $phone;
 
     private function __construct(string $id,
                                  int $code,
@@ -52,14 +53,14 @@ class PhoneConfirmCode
         $this->phone = $phone;
     }
 
-    public static function create(int $code,
+    public static function create(Id $id,
+                                  int $code,
                                   User $user,
                                   DateTimeImmutable $expiresAt,
-                                  string $phone,
-                                  string $id = ''): PhoneConfirmCode
+                                  string $phone): PhoneConfirmCode
     {
         return new PhoneConfirmCode(
-            UuidService::isValidUuidV6($id) ? $id : UuidService::nextUuidV6(),
+            $id->id,
             $code,
             $user,
             $expiresAt,
@@ -67,34 +68,9 @@ class PhoneConfirmCode
         );
     }
 
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    public function getCode(): int
-    {
-        return $this->code;
-    }
-
-    public function getExpiresAt(): DateTimeImmutable
-    {
-        return $this->expiresAt;
-    }
-
     public function isValidExpiresToken(): bool
     {
-        return $this->getExpiresAt()->getTimestamp() >= (new DateTimeImmutable())->getTimestamp();
-    }
-
-    public function getPhone(): string
-    {
-        return $this->phone;
+        return $this->expiresAt->getTimestamp() >= (new DateTimeImmutable())->getTimestamp();
     }
 
 

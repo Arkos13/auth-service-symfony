@@ -19,13 +19,5 @@ class ResendEmailInviteRecoveryPasswordActionTest extends BaseFunctionalTestCase
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testInvalidEmailResendEmailInviteRecoveryPassword(): void
-    {
-        $body = [
-            "email" => "test2@gmail.com",
-            "url" => "localhost"
-        ];
-        $this->client->request("POST", self::ROUTE, $body);
-        $this->assertSame(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
+
 }

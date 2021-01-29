@@ -2,8 +2,11 @@
 
 namespace App\Model\User\Event;
 
-use App\Application\Event\EventInterface;
+use App\Model\Shared\Event\EventInterface;
 
+/**
+ * @psalm-immutable
+ */
 class EditedUserProfileEvent implements EventInterface
 {
     private const TYPE = "sync_user_profile";

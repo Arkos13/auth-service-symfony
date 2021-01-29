@@ -38,7 +38,7 @@ class CheckExistsAction extends BaseAction
      * @param Request $request
      * @return Response
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Response
     {
         if(!($email = $request->query->get('email'))) {
             throw new BadRequestHttpException('Email is not specified');

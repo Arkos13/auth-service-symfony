@@ -45,7 +45,7 @@ class RecoveryPasswordAction extends BaseAction
      * @param Request $request
      * @return Response
      */
-    public function __invoke(RecoveryPasswordRequest $recoveryPasswordRequest, Request $request)
+    public function __invoke(RecoveryPasswordRequest $recoveryPasswordRequest, Request $request): Response
     {
         try {
             $this->commandBus->handle(

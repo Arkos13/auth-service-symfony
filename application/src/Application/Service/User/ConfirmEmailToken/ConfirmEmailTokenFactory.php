@@ -4,9 +4,6 @@ namespace App\Application\Service\User\ConfirmEmailToken;
 
 use App\Model\User\Entity\ConfirmEmailToken;
 use App\Model\User\Repository\ConfirmEmailTokenRepositoryInterface;
-use App\Model\User\Service\ConfirmEmailToken\Factory\ConfirmEmailTokenFactoryAbstract;
-use App\Model\User\Service\ConfirmEmailToken\Factory\Data;
-use App\Model\User\Service\Token\TokenGeneratorInterface;
 use DateTimeImmutable;
 use Exception;
 
@@ -14,13 +11,9 @@ class ConfirmEmailTokenFactory extends ConfirmEmailTokenFactoryAbstract
 {
     private const EXPIRES = "+2 hour";
 
-    private TokenGeneratorInterface $tokenGenerator;
-
-    public function __construct(TokenGeneratorInterface $tokenGenerator,
-                                ConfirmEmailTokenRepositoryInterface $confirmEmailTokenRepository)
+    public function __construct(ConfirmEmailTokenRepositoryInterface $confirmEmailTokenRepository)
     {
         parent::__construct($confirmEmailTokenRepository);
-        $this->tokenGenerator = $tokenGenerator;
     }
 
     /**

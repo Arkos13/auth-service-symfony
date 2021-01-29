@@ -48,7 +48,7 @@ class GetTokenAction extends BaseAction
      * @param ResponseFactoryInterface $responseFactory
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $serverRequest, ResponseFactoryInterface $responseFactory)
+    public function __invoke(ServerRequestInterface $serverRequest, ResponseFactoryInterface $responseFactory): ResponseInterface
     {
         return $this->tokenController->indexAction($serverRequest, $responseFactory);
     }

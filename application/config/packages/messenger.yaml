@@ -79,5 +79,6 @@ framework:
             App\Model\User\Event\EditedUserEmailEvent: synchronize_email
             App\Model\User\Event\EditedUserProfileEvent: synchronize_profile
 
-            App\Application\Event\User\Registered\RegisteredUserEvent: event
-            App\Application\Event\User\RegisteredViaNetwork\RegisteredUserViaNetworkEvent: event
+            App\Model\User\Event\RegisteredUserEvent: event
+            App\Model\User\Event\RegisteredUserViaNetworkEvent: event
+            App\Model\User\Event\ChangedPasswordEvent: event

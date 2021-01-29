@@ -4,7 +4,7 @@ namespace App\Ports\Rest\Action\User\Phone;
 
 use App\Application\Command\CommandBusInterface;
 use App\Application\Command\User\Phone\ConfirmCode\Generate\GeneratePhoneConfirmCodeCommand;
-use App\Infrastructure\Security\Voter\User\Profile\UserProfileVoter;
+use App\Infrastructure\User\Security\Voter\UserProfileVoter;
 use App\Ports\Rest\Action\BaseAction;
 use Exception;
 use JMS\Serializer\SerializerInterface;
@@ -43,7 +43,7 @@ class GenerateCodeAction extends BaseAction
      * @param PhoneConfirmCodeRequest $request
      * @return Response
      */
-    public function __invoke(PhoneConfirmCodeRequest $request)
+    public function __invoke(PhoneConfirmCodeRequest $request): Response
     {
         $this->denyAccessUnlessGranted(UserProfileVoter::EDIT_PHONE, $request->phone);
 

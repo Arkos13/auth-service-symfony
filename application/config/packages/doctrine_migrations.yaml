@@ -1,6 +1,6 @@
 doctrine_migrations:
     migrations_paths:
-        'App\Infrastructure\Migrations': 'src/Infrastructure/Migrations'
+        'App\Infrastructure\Shared\Persistence\Migrations': 'src/Infrastructure/Shared/Persistence/Migrations'
     connection: default
     storage:
         table_storage:

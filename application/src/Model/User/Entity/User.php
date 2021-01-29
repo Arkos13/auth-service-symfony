@@ -2,94 +2,177 @@
 
 namespace App\Model\User\Entity;
 
-use App\Application\Service\Uuid\UuidService;
+use App\Model\Shared\Aggregate\AggregateRoot;
 use App\Model\Shared\Entity\CreatedUpdatedTrait;
+use App\Model\Shared\Entity\Id;
+use App\Model\User\Event\ChangedPasswordEvent;
+use App\Model\User\Event\EditedUserEmailEvent;
+use App\Model\User\Event\EditedUserPhoneEvent;
+use App\Model\User\Event\EditedUserProfileEvent;
+use App\Model\User\Event\RegisteredUserEvent;
+use App\Model\User\Event\RegisteredUserViaNetworkEvent;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
 use JMS\Serializer\Annotation as JMS;
 
 /**
  * @ORM\Entity()
  * @ORM\Table(name="users", uniqueConstraints={@ORM\UniqueConstraint(name="email_idx", columns={"email"})})
  */
-class User implements UserInterface
+class User extends AggregateRoot
 {
     use CreatedUpdatedTrait;
 
     /**
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
-    */
-    private string $id;
+     * @psalm-readonly
+     */
+    public string $id;
 
     /**
      * @ORM\Column(name="email", type="string")
+     * @psalm-readonly-allow-private-mutation
      */
-    private string $email;
+    public string $email;
 
     /**
      * @ORM\Column(name="password", type="string")
      * @JMS\Exclude()
+     * @psalm-readonly-allow-private-mutation
      */
-    private string $password;
+    public string $password;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      * @JMS\Exclude()
+     * @psalm-readonly-allow-private-mutation
      */
-    private ?string $confirmationToken = null;
+    public ?string $confirmationToken = null;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
      * @JMS\Exclude()
+     * @psalm-readonly-allow-private-mutation
      */
-    private ?DateTimeImmutable $expiresConfirmationToken = null;
+    public ?DateTimeImmutable $expiresConfirmationToken = null;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Model\User\Entity\UserProfile", mappedBy="user", cascade={"persist"})
+     * @JMS\Exclude()
+     * @psalm-readonly-allow-private-mutation
+     */
+    public UserProfile $profile;
+
+    /**
+     * @ORM\OneToMany (targetEntity="App\Model\User\Entity\Network", mappedBy="user", cascade={"persist"}, fetch="EXTRA_LAZY")
+     * @JMS\Exclude()
+     * @psalm-readonly-allow-private-mutation
+     * @var Collection<int, Network>
+     */
+    public Collection $networks;
 
     private function __construct(string $id, string $email, string $password)
     {
         $this->id = $id;
         $this->email = $email;
         $this->password = $password;
+        $this->networks = new ArrayCollection();
     }
 
-    public static function create(string $email, string $password, string $id = ''): User
+    public static function create(Id $id, string $email, string $password, string $firstName, string $lastName): User
     {
-        return new User(
-            UuidService::isValidUuidV6($id) ? $id : UuidService::nextUuidV6(),
+        $user = new User(
+            $id->id,
             $email,
-            $password
+            $password,
         );
+        $user->profile = UserProfile::create($user, $firstName, $lastName);
+        $user->apply(new RegisteredUserEvent($user->email));
+        return $user;
     }
 
-    public function getId(): string
+    public static function createByNetwork(Id $id,
+                                           string $email,
+                                           string $password,
+                                           string $firstName,
+                                           string $lastName,
+                                           string $networkIdentifier,
+                                           string $network,
+                                           ?string $networkAccessToken = null): User
     {
-        return $this->id;
-    }
+        $user = new User(
+            $id->id,
+            $email,
+            $password,
+        );
+        $user->profile = UserProfile::create($user, $firstName, $lastName);
+        $user->addNetwork($networkIdentifier, $network, $networkAccessToken);
 
-    public function getEmail(): string
-    {
-        return $this->email;
+        $user->apply(new RegisteredUserViaNetworkEvent(
+            $user->email,
+            $password
+        ));
+
+        return $user;
     }
 
     public function setEmail(string $email): void
     {
-        $this->email = $email;
-    }
+        $this->apply(
+            new EditedUserEmailEvent(
+                $this->email,
+                $email
+            )
+        );
 
-    public function getPassword(): string
-    {
-        return $this->password;
+        $this->email = $email;
     }
 
     public function setPassword(string $password): void
     {
         $this->password = $password;
+        $this->apply(new ChangedPasswordEvent($this->email));
     }
 
-    public function getConfirmationToken(): ?string
+    public function setPhone(string $phone): void
     {
-        return $this->confirmationToken;
+        $this->profile->setPhone($phone);
+        $this->apply(new EditedUserPhoneEvent($this->email, $phone));
+    }
+
+    public function editProfile(string $firstName,
+                                string $lastName,
+                                ?DateTimeImmutable $birthday,
+                                ?string $gender): void
+    {
+        $this->profile->editProfile($firstName, $lastName, $birthday, $gender);
+        $this->apply(
+            new EditedUserProfileEvent(
+                $this->email,
+                $firstName,
+                $lastName,
+                $birthday ? $birthday->format('Y-m-d H:i:s') : null,
+                $gender
+            )
+        );
+    }
+
+    public function addNetwork(string $identifier,
+                               string $network,
+                               ?string $accessToken = null): void
+    {
+        $this->networks->add(
+            Network::create(
+                Id::create(),
+                $this,
+                $identifier,
+                $network,
+                $accessToken,
+            )
+        );
     }
 
     public function setConfirmationToken(?string $confirmationToken): void
@@ -97,18 +180,13 @@ class User implements UserInterface
         $this->confirmationToken = $confirmationToken;
     }
 
-    public function getExpiresConfirmationToken(): ?DateTimeImmutable
-    {
-        return $this->expiresConfirmationToken;
-    }
-
     public function isValidExpiresConfirmationToken(): bool
     {
-        if (!$this->getExpiresConfirmationToken()) {
+        if (!$this->expiresConfirmationToken) {
             return false;
         }
 
-        return $this->getExpiresConfirmationToken()->getTimestamp() >= (new DateTimeImmutable())->getTimestamp();
+        return $this->expiresConfirmationToken->getTimestamp() >= (new DateTimeImmutable())->getTimestamp();
     }
 
     public function setExpiresConfirmationToken(?DateTimeImmutable $expiresConfirmationToken): void
@@ -116,23 +194,5 @@ class User implements UserInterface
         $this->expiresConfirmationToken = $expiresConfirmationToken;
     }
 
-    public function getRoles(): array
-    {
-        return [];
-    }
 
-    public function getSalt(): string
-    {
-        return "";
-    }
-
-    public function getUsername(): string
-    {
-        return $this->email;
-    }
-
-    public function eraseCredentials(): void
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
 }

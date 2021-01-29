@@ -1,11 +1,11 @@
 security:
     encoders:
-        App\Model\User\Entity\User:
+        App\Infrastructure\User\Security\UserIdentity:
             algorithm: sodium
 
     providers:
         user_provider:
-            id: App\Infrastructure\Security\UserProvider
+            id: App\Infrastructure\User\Security\UserProvider
 
     firewalls:
         api_doc:

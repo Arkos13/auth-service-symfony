@@ -49,7 +49,7 @@ class RegistrationAction extends BaseAction
      * @param RegistrationRequest $registrationRequest
      * @return Response
      */
-    public function __invoke(RegistrationRequest $registrationRequest)
+    public function __invoke(RegistrationRequest $registrationRequest): Response
     {
         try {
 
@@ -58,7 +58,6 @@ class RegistrationAction extends BaseAction
                     $registrationRequest->email,
                     $registrationRequest->firstName,
                     $registrationRequest->lastName,
-                    $registrationRequest->url,
                     $registrationRequest->password
                 )
             );

@@ -4,14 +4,17 @@ namespace App\Application\Command\User\RegistrationViaNetwork;
 
 use App\Application\Command\CommandInterface;
 
+/**
+ * @psalm-immutable
+*/
 class RegistrationViaNetworkCommand implements CommandInterface
 {
-    private string $email;
-    private string $firstName;
-    private string $lastName;
-    private string $network;
-    private string $identifier;
-    private string $networkAccessToken;
+    public string $email;
+    public string $firstName;
+    public string $lastName;
+    public string $network;
+    public string $identifier;
+    public string $networkAccessToken;
 
     public function __construct(string $email,
                                 string $firstName,
@@ -26,36 +29,6 @@ class RegistrationViaNetworkCommand implements CommandInterface
         $this->network = $network;
         $this->identifier = $identifier;
         $this->networkAccessToken = $networkAccessToken;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getFirstName(): string
-    {
-        return $this->firstName;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    public function getNetwork(): string
-    {
-        return $this->network;
-    }
-
-    public function getIdentifier(): string
-    {
-        return $this->identifier;
-    }
-
-    public function getNetworkAccessToken(): string
-    {
-        return $this->networkAccessToken;
     }
 
 

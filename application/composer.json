@@ -6,11 +6,13 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
+        "ext-openssl": "*",
         "ext-sodium": "*",
+        "elasticsearch/elasticsearch": "^7.10",
+        "firebase/php-jwt": "^5.2",
         "friendsofsymfony/rest-bundle": "^3.0",
-        "gedmo/doctrine-extensions": "^2.4",
         "gpslab/geoip2": "2.0",
-        "jms/serializer-bundle": "^3.6",
+        "jms/serializer-bundle": "dev-master",
         "knpuniversity/oauth2-client-bundle": "^2.1",
         "league/oauth2-facebook": "^2.0",
         "league/oauth2-google": "^3.0",
@@ -22,7 +24,7 @@
         "ramsey/uuid": "^4.0",
         "ramsey/uuid-doctrine": "^1.6",
         "sensio/framework-extra-bundle": "^5.1",
-        "stof/doctrine-extensions-bundle": "^1.4",
+        "antishov/doctrine-extensions-bundle": "^1.4.3",
         "symfony/asset": "*",
         "symfony/console": "*",
         "symfony/dotenv": "*",
@@ -33,7 +35,7 @@
         "symfony/http-client": "*",
         "symfony/intl": "*",
         "symfony/mailer": "*",
-        "symfony/messenger": "5.1.*",
+        "symfony/messenger": "*",
         "symfony/monolog-bundle": "^3.1",
         "symfony/notifier": "*",
         "symfony/orm-pack": "*",
@@ -52,7 +54,7 @@
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^6.3",
-        "doctrine/doctrine-fixtures-bundle": "^3.3",
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "phpstan/phpstan": "^0.12.25",
         "symfony/debug-pack": "*",
         "symfony/maker-bundle": "^1.0",
@@ -103,7 +105,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "5.1.*"
+            "require": "5.2.*"
         }
     }
 }

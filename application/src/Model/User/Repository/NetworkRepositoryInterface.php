@@ -8,5 +8,5 @@ interface NetworkRepositoryInterface
 {
     public function findOneByEmailAndNetwork(string $email, string $network): ?Network;
     public function findOneByEmailAndAccessToken(string $email, string $accessToken, string $network): ?Network;
-    public function add(Network $network): void;
+    public function updateAccessToken(Network $network, ?string $accessToken): void;
 }

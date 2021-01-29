@@ -3,43 +3,34 @@
 namespace App\Application\Command\User\Profile\Edit;
 
 use App\Application\Command\CommandHandlerInterface;
-use App\Application\Event\EventBusInterface;
-use App\Model\User\Event\EditedUserProfileEvent;
-use App\Model\User\Repository\UserProfileRepositoryInterface;
+use App\Model\Shared\Event\EventBusInterface;
+use App\Model\User\Repository\UserRepositoryInterface;
 
 class EditUserProfileCommandHandler implements CommandHandlerInterface
 {
-    private UserProfileRepositoryInterface $userProfileRepository;
+    private UserRepositoryInterface $repository;
     private EventBusInterface $eventBus;
 
-    public function __construct(UserProfileRepositoryInterface $userProfileRepository,
+    public function __construct(UserRepositoryInterface $repository,
                                 EventBusInterface $eventBus)
     {
-        $this->userProfileRepository = $userProfileRepository;
+        $this->repository = $repository;
         $this->eventBus = $eventBus;
     }
 
     public function __invoke(EditUserProfileCommand $command): void
     {
-        $userProfile = $this->userProfileRepository->getOneByUserId($command->getUserId());
+        $user = $this->repository->getOneById($command->userId);
 
-        $userProfile->setFirstName($command->getFirstName());
-        $userProfile->setLastName($command->getLastName());
-        $userProfile->setBirthday($command->getBirthday());
-        $userProfile->setGender($command->getGender());
-        $this->userProfileRepository->add($userProfile);
-
-        $this->eventBus->handle(
-            new EditedUserProfileEvent(
-                $userProfile->getUser()->getEmail(),
-                $userProfile->getFirstName(),
-                $userProfile->getLastName(),
-                $userProfile->getGender(),
-                $userProfile->getBirthday()
-                    ? $userProfile->getBirthday()->format('Y-m-d H:i:s')
-                    : null
-            )
+        $user->editProfile(
+            $command->firstName,
+            $command->lastName,
+            $command->birthday,
+            $command->gender
         );
+        $this->repository->add($user);
+
+        $this->eventBus->handle(...$user->pullDomainEvents());
     }
 
 

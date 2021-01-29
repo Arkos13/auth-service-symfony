@@ -15,10 +15,4 @@ class ConfirmUserActionTest extends BaseFunctionalTestCase
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testInvalidTokenUserConfirm(): void
-    {
-        $this->client->request("POST", self::ROUTE . "?token=1234");
-        $this->assertSame(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
 }

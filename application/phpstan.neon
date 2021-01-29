@@ -3,5 +3,7 @@ parameters:
     paths:
         - src
     excludes_analyse:
-        - src/Infrastructure/Migrations
-        - src/Infrastructure/DataFixtures
+        - src/Infrastructure/Shared/Persistence/Migrations
+        - src/Infrastructure/Shared/Persistence/DataFixtures
+includes:
+	- vendor/phpstan/phpstan/conf/bleedingEdge.neon

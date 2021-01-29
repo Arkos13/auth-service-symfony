@@ -11,8 +11,8 @@
         <directory name="src" />
         <ignoreFiles>
             <directory name="vendor" />
-            <directory name="src/Infrastructure/Migrations"/>
-            <directory name="src/Infrastructure/DataFixtures"/>
+            <directory name="src/Infrastructure/Shared/Persistence/Migrations"/>
+            <directory name="src/Infrastructure/Shared/Persistence/DataFixtures"/>
         </ignoreFiles>
     </projectFiles>
 </psalm>

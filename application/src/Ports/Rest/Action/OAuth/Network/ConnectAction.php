@@ -14,7 +14,6 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Swagger\Annotations as SWG;
@@ -24,19 +23,16 @@ class ConnectAction extends BaseAction
 {
     private FetchUserInterface $fetchUser;
     private TrikoderTokenController $tokenController;
-    private RequestStack $requestStack;
     private CommandBusInterface $commandBus;
 
     public function __construct(SerializerInterface $serializer,
                                 FetchUserInterface $fetchUser,
                                 TrikoderTokenController $tokenController,
-                                RequestStack $requestStack,
                                 CommandBusInterface $commandBus)
     {
         parent::__construct($serializer);
         $this->fetchUser = $fetchUser;
         $this->tokenController = $tokenController;
-        $this->requestStack = $requestStack;
         $this->commandBus = $commandBus;
     }
 
@@ -67,7 +63,7 @@ class ConnectAction extends BaseAction
      */
     public function __invoke(UserNetworkCheckRequest $request,
                                   ServerRequestInterface $serverRequest,
-                                  ResponseFactoryInterface $responseFactory)
+                                  ResponseFactoryInterface $responseFactory): ResponseInterface
     {
         try {
             $network = $this->fetchUser->fetch(

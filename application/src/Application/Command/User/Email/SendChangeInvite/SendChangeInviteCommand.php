@@ -4,32 +4,20 @@ namespace App\Application\Command\User\Email\SendChangeInvite;
 
 use App\Application\Command\CommandInterface;
 
+/**
+ * @psalm-immutable
+*/
 class SendChangeInviteCommand implements CommandInterface
 {
-    private string $email;
-    private string $newEmail;
-    private string $url;
+    public string $email;
+    public string $newEmail;
+    public string $url;
 
     public function __construct(string $email, string $newEmail, string $url)
     {
         $this->email = $email;
         $this->newEmail = $newEmail;
         $this->url = $url;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getNewEmail(): string
-    {
-        return $this->newEmail;
-    }
-
-    public function getUrl(): string
-    {
-        return $this->url;
     }
 
 

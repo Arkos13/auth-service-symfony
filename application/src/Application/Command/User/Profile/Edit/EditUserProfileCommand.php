@@ -5,13 +5,16 @@ namespace App\Application\Command\User\Profile\Edit;
 use App\Application\Command\CommandInterface;
 use DateTimeImmutable;
 
+/**
+ * @psalm-immutable
+ */
 class EditUserProfileCommand implements CommandInterface
 {
-    private string $userId;
-    private string $firstName;
-    private string $lastName;
-    private ?DateTimeImmutable $birthday;
-    private ?string $gender;
+    public string $userId;
+    public string $firstName;
+    public string $lastName;
+    public ?DateTimeImmutable $birthday;
+    public ?string $gender;
 
     public function __construct(string $userId,
                                 string $firstName,
@@ -24,31 +27,6 @@ class EditUserProfileCommand implements CommandInterface
         $this->lastName = $lastName;
         $this->birthday = $birthday;
         $this->gender = $gender;
-    }
-
-    public function getUserId(): string
-    {
-        return $this->userId;
-    }
-
-    public function getFirstName(): string
-    {
-        return $this->firstName;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    public function getBirthday(): ?DateTimeImmutable
-    {
-        return $this->birthday;
-    }
-
-    public function getGender(): ?string
-    {
-        return $this->gender;
     }
 
 

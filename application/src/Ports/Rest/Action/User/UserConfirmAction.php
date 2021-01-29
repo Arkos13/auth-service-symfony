@@ -35,7 +35,7 @@ class UserConfirmAction extends BaseAction
      * @param Request $request
      * @return Response
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): Response
     {
         try {
             $this->commandBus->handle(

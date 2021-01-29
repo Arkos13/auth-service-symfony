@@ -19,13 +19,5 @@ class SendChangeEmailInviteActionTest extends BaseFunctionalTestCase
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testAlreadyExistsSendChangeEmailInvite(): void
-    {
-        $body = [
-            "email" => "test@gmail.com",
-            "url" => "localhost"
-        ];
-        $this->client->request("POST", self::ROUTE, $body, [], $this->getHeadersToken());
-        $this->assertSame(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
+
 }

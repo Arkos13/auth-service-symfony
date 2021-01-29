@@ -19,16 +19,6 @@ class RecoveryPasswordActionTest extends BaseFunctionalTestCase
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testInvalidTokenRecoveryPassword(): void
-    {
-        $body = [
-            "password" => "123456",
-            "confirmPassword" => "123456"
-        ];
-        $this->client->request("POST", self::ROUTE . "?token=1234", $body);
-        $this->assertSame(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
-
     public function testInvalidPasswordRecoveryPassword(): void
     {
         $body = [

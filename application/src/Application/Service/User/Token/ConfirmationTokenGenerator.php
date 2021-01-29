@@ -4,7 +4,6 @@ namespace App\Application\Service\User\Token;
 
 use App\Model\User\Entity\User;
 use App\Model\User\Repository\UserRepositoryInterface;
-use App\Model\User\Service\Token\TokenGeneratorInterface;
 use DateTimeImmutable;
 use Exception;
 

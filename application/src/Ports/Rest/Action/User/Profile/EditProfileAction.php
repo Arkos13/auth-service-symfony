@@ -49,7 +49,7 @@ class EditProfileAction extends BaseAction
      * @param UserProfileEditRequest $userProfileEditRequest
      * @return Response
      */
-    public function __invoke(UserProfileEditRequest $userProfileEditRequest)
+    public function __invoke(UserProfileEditRequest $userProfileEditRequest): Response
     {
         try {
             $this->commandBus->handle(

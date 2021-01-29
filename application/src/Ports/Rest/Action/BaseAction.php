@@ -2,7 +2,7 @@
 
 namespace App\Ports\Rest\Action;
 
-use App\Model\User\Entity\User;
+use App\Infrastructure\User\Security\UserIdentity;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,13 +17,13 @@ abstract class BaseAction extends AbstractController
         $this->serializer = $serializer;
     }
 
-    public function getCurrentUser(): User
+    public function getCurrentUser(): UserIdentity
     {
         if (is_null($user = $this->getUser())) {
             throw new UnauthorizedHttpException("User does not unauthorized");
         }
 
-        /** @var User $user */
+        /** @var UserIdentity $user */
         return $user;
     }
 
@@ -31,7 +31,7 @@ abstract class BaseAction extends AbstractController
      * @param mixed $data
      * @return Response
      */
-    public function jsonResponse($data)
+    public function jsonResponse($data): Response
     {
         return new Response($this->serializer->serialize($data, 'json'));
     }

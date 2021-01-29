@@ -3,29 +3,28 @@
 namespace App\Application\Command\User\Phone\Edit;
 
 use App\Application\Command\CommandHandlerInterface;
-use App\Application\Event\EventBusInterface;
-use App\Model\User\Event\EditedUserPhoneEvent;
-use App\Model\User\Repository\UserProfileRepositoryInterface;
+use App\Model\Shared\Event\EventBusInterface;
+use App\Model\User\Repository\UserRepositoryInterface;
 
 class EditPhoneCommandHandler implements CommandHandlerInterface
 {
-    private UserProfileRepositoryInterface $userProfileRepository;
+    private UserRepositoryInterface $userRepository;
     private EventBusInterface $eventBus;
 
-    public function __construct(UserProfileRepositoryInterface $userProfileRepository, EventBusInterface $eventBus)
+    public function __construct(UserRepositoryInterface $userRepository, EventBusInterface $eventBus)
     {
-        $this->userProfileRepository = $userProfileRepository;
+        $this->userRepository = $userRepository;
         $this->eventBus = $eventBus;
     }
 
     public function __invoke(EditPhoneCommand $command): void
     {
-        $profile = $this->userProfileRepository->getOneByUserId($command->getProfileId());
+        $user = $this->userRepository->getOneById($command->profileId);
 
-        $profile->setPhone($command->getPhone());
-        $this->userProfileRepository->add($profile);
+        $user->setPhone($command->phone);
+        $this->userRepository->add($user);
 
-        $this->eventBus->handle(new EditedUserPhoneEvent($profile->getUser()->getEmail(), $command->getPhone()));
+        $this->eventBus->handle(...$user->pullDomainEvents());
 
     }
 }

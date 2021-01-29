@@ -11,6 +11,5 @@ class FakeSmsService implements SmsInterface
      */
     public function send(string $text, array $phones): void
     {
-        // TODO: Implement send() method.
     }
 }

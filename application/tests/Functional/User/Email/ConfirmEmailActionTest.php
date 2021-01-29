@@ -2,6 +2,7 @@
 
 namespace App\Tests\Functional\User\Email;
 
+use App\Infrastructure\Shared\Persistence\DataFixtures\User\ConfirmEmailTokenFixtures;
 use App\Tests\Functional\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,18 +13,11 @@ class ConfirmEmailActionTest extends BaseFunctionalTestCase
     public function testConfirmEmail(): void
     {
         $body = [
-            "token" => "123",
+            "token" => ConfirmEmailTokenFixtures::TOKEN_TEST,
         ];
         $this->client->request("POST", self::ROUTE, $body);
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
     }
 
-    public function testInvalidTokenConfirmEmail(): void
-    {
-        $body = [
-            "token" => "1234",
-        ];
-        $this->client->request("POST", self::ROUTE, $body);
-        $this->assertSame(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
-    }
+
 }

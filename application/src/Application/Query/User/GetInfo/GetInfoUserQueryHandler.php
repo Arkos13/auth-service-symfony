@@ -4,36 +4,26 @@ namespace App\Application\Query\User\GetInfo;
 
 use App\Application\Query\QueryHandlerInterface;
 use App\Application\Query\User\DTO\UserDTO;
-use App\Model\User\Exception\UserNotExistsException;
-use App\Model\User\Repository\UserProfileRepositoryInterface;
 use App\Model\User\Repository\UserRepositoryInterface;
 
 class GetInfoUserQueryHandler implements QueryHandlerInterface
 {
-    private UserProfileRepositoryInterface $userProfileRepository;
     private UserRepositoryInterface $userRepository;
 
-    public function __construct(UserProfileRepositoryInterface $userProfileRepository,
-                                UserRepositoryInterface $userRepository)
+    public function __construct(UserRepositoryInterface $userRepository)
     {
-        $this->userProfileRepository = $userProfileRepository;
         $this->userRepository = $userRepository;
     }
 
     public function __invoke(GetInfoUserQuery $query): UserDTO
     {
-        $user = $this->userRepository->findOneById($query->getUserId());
-        $userProfile = $this->userProfileRepository->findOneByUserId($query->getUserId());
-
-        if (empty($user) || empty($userProfile)) {
-            throw new UserNotExistsException();
-        }
+        $user = $this->userRepository->getOneById($query->userId);
 
         return new UserDTO(
-            $user->getId(),
-            $user->getEmail(),
-            $userProfile->getFirstName(),
-            $userProfile->getLastName()
+            $user->id,
+            $user->email,
+            $user->profile->firstName,
+            $user->profile->lastName
         );
     }
 

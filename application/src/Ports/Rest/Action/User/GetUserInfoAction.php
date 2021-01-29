@@ -35,7 +35,7 @@ class GetUserInfoAction extends BaseAction
      * @Route("/api/users/info", methods={"GET"}, name="user_info")
      * @return Response
      */
-    public function __invoke()
+    public function __invoke(): Response
     {
         try {
             return $this->jsonResponse(

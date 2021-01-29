@@ -2,8 +2,8 @@
 
 namespace App\Tests\Functional\User\Phone;
 
-use App\Infrastructure\DataFixtures\User\PhoneConfirmCodeFixtures;
-use App\Infrastructure\DataFixtures\User\UserFixtures;
+use App\Infrastructure\Shared\Persistence\DataFixtures\User\PhoneConfirmCodeFixtures;
+use App\Infrastructure\Shared\Persistence\DataFixtures\User\UserFixtures;
 use App\Tests\Functional\BaseFunctionalTestCase;
 use Symfony\Component\HttpFoundation\Response;
 

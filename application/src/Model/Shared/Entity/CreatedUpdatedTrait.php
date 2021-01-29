@@ -11,29 +11,16 @@ trait CreatedUpdatedTrait
     /**
      * @Gedmo\Timestampable(on="create")
      * @ORM\Column(type="datetime_immutable")
+     * @psalm-readonly
      */
-    protected DateTimeImmutable $created;
+    public DateTimeImmutable $created;
 
     /**
      * @Gedmo\Timestampable(on="update")
      * @ORM\Column(type="datetime_immutable")
+     * @psalm-readonly-allow-private-mutation
      */
-    protected DateTimeImmutable $updated;
-
-    public function getCreated(): DateTimeImmutable
-    {
-        return $this->created;
-    }
-
-    public function setCreated(DateTimeImmutable $created): void
-    {
-        $this->created = $created;
-    }
-
-    public function getUpdated(): DateTimeImmutable
-    {
-        return $this->updated;
-    }
+    public DateTimeImmutable $updated;
 
     public function setUpdated(DateTimeImmutable $updated): void
     {

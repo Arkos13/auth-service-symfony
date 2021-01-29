@@ -13,7 +13,7 @@ class CheckAction extends AbstractController
      * @Route("/open_api/networks/check", methods={"GET"}, name="networks_check")
      * @return JsonResponse
      */
-    public function __invoke()
+    public function __invoke(): JsonResponse
     {
         return new JsonResponse(1);
     }

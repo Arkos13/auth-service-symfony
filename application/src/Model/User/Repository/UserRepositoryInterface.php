@@ -10,5 +10,6 @@ interface UserRepositoryInterface
     public function findOneByConfirmationToken(string $token): ?User;
     public function findOneById(string $id): ?User;
     public function getOneById(string $id): User;
+    public function getOneByEmail(string $email): User;
     public function add(User $user): void;
 }

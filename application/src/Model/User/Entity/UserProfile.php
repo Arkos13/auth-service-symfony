@@ -20,38 +20,44 @@ class UserProfile
 
     /**
      * @ORM\Id()
-     * @ORM\OneToOne(targetEntity="App\Model\User\Entity\User")
+     * @ORM\OneToOne(targetEntity="App\Model\User\Entity\User", inversedBy="profile")
      * @ORM\JoinColumn(name="user_id", nullable=false, onDelete="CASCADE")
      * @Serializer\Exclude()
+     * @psalm-readonly
      */
-    private User $user;
+    public User $user;
 
     /**
      * @ORM\Column(type="string")
      * @Serializer\SerializedName("firstName")
+     * @psalm-readonly-allow-private-mutation
      */
-    private string $firstName;
+    public string $firstName;
 
     /**
      * @ORM\Column(type="string")
      * @Serializer\SerializedName("lastName")
+     * @psalm-readonly-allow-private-mutation
      */
-    private string $lastName;
+    public string $lastName;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
+     * @psalm-readonly-allow-private-mutation
      */
-    private ?string $phone;
+    public ?string $phone;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @psalm-readonly-allow-private-mutation
      */
-    private ?DateTimeImmutable $birthday;
+    public ?DateTimeImmutable $birthday;
 
     /**
      * @ORM\Column(type="string", nullable=true, length=10)
+     * @psalm-readonly-allow-private-mutation
      */
-    private ?string $gender;
+    public ?string $gender;
 
     private function __construct(User $user, string $firstName, string $lastName)
     {
@@ -65,58 +71,29 @@ class UserProfile
         return new UserProfile($user, $firstName, $lastName);
     }
 
-    public function getUser(): User
+    public function getUserId(): string
     {
-        return $this->user;
+        return $this->user->id;
     }
 
-    public function getFirstName(): string
+    public function getFullName(): string
     {
-        return $this->firstName;
+        return "{$this->firstName} {$this->lastName}";
     }
 
-    public function setFirstName(string $firstName): void
-    {
-        $this->firstName = $firstName;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): void
-    {
-        $this->lastName = $lastName;
-    }
-
-    public function getPhone(): ?string
-    {
-        return $this->phone;
-    }
-
-    public function setPhone(?string $phone): void
+    public function setPhone(string $phone): void
     {
         $this->phone = $phone;
     }
 
-    public function getBirthday(): ?DateTimeImmutable
+    public function editProfile(string $firstName,
+                                string $lastName,
+                                ?DateTimeImmutable $birthday,
+                                ?string $gender): void
     {
-        return $this->birthday;
-    }
-
-    public function setBirthday(?DateTimeImmutable $birthday): void
-    {
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
         $this->birthday = $birthday;
-    }
-
-    public function getGender(): ?string
-    {
-        return $this->gender;
-    }
-
-    public function setGender(?string $gender): void
-    {
         $this->gender = $gender;
     }
 

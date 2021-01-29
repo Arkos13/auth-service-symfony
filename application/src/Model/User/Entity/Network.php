@@ -2,7 +2,7 @@
 
 namespace App\Model\User\Entity;
 
-use App\Application\Service\Uuid\UuidService;
+use App\Model\Shared\Entity\Id;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -15,30 +15,35 @@ class Network
     /**
      * @ORM\Id
      * @ORM\Column(type="uuid", unique=true)
+     * @psalm-readonly
      */
-    private string $id;
+    public string $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Model\User\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\Model\User\Entity\User", inversedBy="networks")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @psalm-readonly
      */
-    private User $user;
+    public User $user;
 
     /**
      * @ORM\Column(type="string")
+     * @psalm-readonly
      */
-    private string $network;
+    public string $network;
 
     /**
      * @ORM\Column(type="string")
+     * @psalm-readonly
      */
-    private string $identifier;
+    public string $identifier;
 
     /**
      * @ORM\Column(type="string", nullable=true)
      * @Serializer\Exclude()
+     * @psalm-readonly-allow-private-mutation
      */
-    private ?string $accessToken;
+    public ?string $accessToken;
 
     public function __construct(string $id,
                                 User $user,
@@ -53,39 +58,13 @@ class Network
         $this->accessToken = $accessToken;
     }
 
-    public static function create(User $user,
+    public static function create(Id $id,
+                                  User $user,
                                   string $identifier,
                                   string $network,
-                                  ?string $accessToken = null,
-                                  string $id = ''): Network
+                                  ?string $accessToken = null): Network
     {
-        $id = UuidService::isValidUuidV6($id) ? $id : UuidService::nextUuidV6();
-        return new Network($id, $user, $identifier, $network, $accessToken);
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    public function getNetwork(): string
-    {
-        return $this->network;
-    }
-
-    public function getIdentifier(): string
-    {
-        return $this->identifier;
-    }
-
-    public function getAccessToken(): ?string
-    {
-        return $this->accessToken;
+        return new Network($id->id, $user, $identifier, $network, $accessToken);
     }
 
     public function setAccessToken(?string $accessToken): void

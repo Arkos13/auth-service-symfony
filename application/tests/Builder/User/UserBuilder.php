@@ -2,6 +2,7 @@
 
 namespace App\Tests\Builder\User;
 
+use App\Model\Shared\Entity\Id;
 use App\Model\User\Entity\User;
 use DateTimeImmutable;
 
@@ -24,7 +25,7 @@ class UserBuilder
 
     public function build(): User
     {
-        $user = User::create($this->email, '');
+        $user = User::create(Id::create(), $this->email, '', 'test', 'test');
         $user->setExpiresConfirmationToken($this->expiresToken);
         return $user;
     }

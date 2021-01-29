@@ -29,12 +29,6 @@ class RegistrationRequest implements RequestDtoInterface
 
     /**
      * @Assert\NotBlank()
-     * @SWG\Property(property="url", description="url for confirmation account", type="string")
-     */
-    public string $url;
-
-    /**
-     * @Assert\NotBlank()
      * @Assert\EqualTo(propertyPath="confirmPassword")
      * @SWG\Property(property="password", type="string")
      */
@@ -51,7 +45,6 @@ class RegistrationRequest implements RequestDtoInterface
         $this->email = strtolower($request->request->get('email') ?? "");
         $this->firstName = $request->request->get('firstName') ?? "";
         $this->lastName = $request->request->get('lastName') ?? "";
-        $this->url = $request->request->get('url') ?? "";
         $this->password = $request->request->get('password') ?? "";
         $this->confirmPassword = $request->request->get('confirmPassword') ?? "";
     }

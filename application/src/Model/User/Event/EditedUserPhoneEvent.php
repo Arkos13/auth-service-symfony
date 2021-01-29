@@ -2,8 +2,11 @@
 
 namespace App\Model\User\Event;
 
-use App\Application\Event\EventInterface;
+use App\Model\Shared\Event\EventInterface;
 
+/**
+ * @psalm-immutable
+ */
 class EditedUserPhoneEvent implements EventInterface
 {
     private const TYPE = "sync_phone";

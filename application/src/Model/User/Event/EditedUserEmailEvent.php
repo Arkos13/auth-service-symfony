@@ -2,8 +2,11 @@
 
 namespace App\Model\User\Event;
 
-use App\Application\Event\EventInterface;
+use App\Model\Shared\Event\EventInterface;
 
+/**
+ * @psalm-immutable
+ */
 class EditedUserEmailEvent implements EventInterface
 {
     private const TYPE = "sync_email";

@@ -37,8 +37,7 @@ class FetchUser implements FetchUserInterface
         );
 
         if ($network) {
-            $network->setAccessToken($data->accessToken);
-            $this->networkRepository->add($network);
+            $this->networkRepository->updateAccessToken($network, $data->accessToken);
         }
 
         return $network;

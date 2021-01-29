@@ -2,11 +2,9 @@
 
 namespace App\Application\Service\User\Phone;
 
-use App\Model\User\Entity\User;
 use App\Model\User\Exception\PhoneConfirmCodeExpiredException;
 use App\Model\User\Exception\PhoneConfirmCodeNotFoundException;
 use App\Model\User\Repository\PhoneConfirmCodeRepositoryInterface;
-use App\Model\User\Service\UserProfile\PhoneConfirmCode\CheckConfirmCodeInterface;
 
 class CheckConfirmCode implements CheckConfirmCodeInterface
 {
@@ -17,9 +15,9 @@ class CheckConfirmCode implements CheckConfirmCodeInterface
         $this->phoneConfirmCodeRepository = $phoneConfirmCodeRepository;
     }
 
-    public function checkCode(User $user, int $code): string
+    public function checkCode(string $userId, int $code): string
     {
-        $code = $this->phoneConfirmCodeRepository->findOneByUserIdAndCode($user->getId(), $code);
+        $code = $this->phoneConfirmCodeRepository->findOneByUserIdAndCode($userId, $code);
 
         if (!$code) {
             throw new PhoneConfirmCodeNotFoundException();
@@ -29,7 +27,7 @@ class CheckConfirmCode implements CheckConfirmCodeInterface
             throw new PhoneConfirmCodeExpiredException();
         }
 
-        $phone = $code->getPhone();
+        $phone = $code->phone;
         $this->phoneConfirmCodeRepository->remove($code);
 
         return $phone;

@@ -43,12 +43,12 @@ class SendChangeEmailInviteAction extends BaseAction
      * @param EmailInviteRequest $emailInviteRequest
      * @return Response
      */
-    public function __invoke(EmailInviteRequest $emailInviteRequest)
+    public function __invoke(EmailInviteRequest $emailInviteRequest): Response
     {
         try {
             $this->commandBus->handle(
                 new SendChangeInviteCommand(
-                    $this->getCurrentUser()->getEmail(),
+                    $this->getCurrentUser()->getUsername(),
                     $emailInviteRequest->email,
                     $emailInviteRequest->url,
                 )

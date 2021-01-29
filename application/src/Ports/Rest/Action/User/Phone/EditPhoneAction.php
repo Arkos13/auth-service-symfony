@@ -5,7 +5,7 @@ namespace App\Ports\Rest\Action\User\Phone;
 use App\Application\Command\CommandBusInterface;
 use App\Application\Command\User\Phone\Edit\EditPhoneCommand;
 use App\Model\User\Entity\UserProfile;
-use App\Model\User\Service\UserProfile\PhoneConfirmCode\CheckConfirmCodeInterface;
+use App\Application\Service\User\Phone\CheckConfirmCodeInterface;
 use App\Ports\Rest\Action\BaseAction;
 use Exception;
 use JMS\Serializer\SerializerInterface;
@@ -49,11 +49,11 @@ class EditPhoneAction extends BaseAction
      * @param UserProfilePhoneEditRequest $request
      * @return Response
      */
-    public function __invoke(UserProfile $profile, UserProfilePhoneEditRequest $request)
+    public function __invoke(UserProfile $profile, UserProfilePhoneEditRequest $request): Response
     {
         try {
-            $phone = $this->checkConfirmCode->checkCode($this->getCurrentUser(), $request->code);
-            $this->commandBus->handle(new EditPhoneCommand($profile->getUser()->getId(), $phone));
+            $phone = $this->checkConfirmCode->checkCode($this->getCurrentUser()->getId(), $request->code);
+            $this->commandBus->handle(new EditPhoneCommand($profile->getUserId(), $phone));
             return $this->jsonResponse(true);
         } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage());

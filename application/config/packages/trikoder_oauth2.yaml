@@ -10,8 +10,11 @@ trikoder_oauth2:
         access_token_ttl: P1D
         refresh_token_ttl: P7D
 
-        enable_password_grant: true
-        enable_refresh_token_grant: true
+        grant_types:
+            password:
+                enable: true
+            refresh_token:
+                enable: true
 
     resource_server:
         public_key: '%env(string:OAUTH2_PATH_PUBLIC_KEY)%'

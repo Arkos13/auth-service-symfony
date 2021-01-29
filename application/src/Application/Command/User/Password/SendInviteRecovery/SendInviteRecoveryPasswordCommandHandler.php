@@ -6,20 +6,20 @@ use App\Application\Command\CommandHandlerInterface;
 use App\Application\Service\Mail\MailServiceInterface;
 use App\Model\User\Exception\EmailInviteException;
 use App\Model\User\Repository\UserRepositoryInterface;
-use App\Model\User\Service\Token\TokenGeneratorInterface;
+use App\Application\Service\User\ConfirmPasswordToken\ConfirmPasswordTokenFactoryAbstract;
 
 class SendInviteRecoveryPasswordCommandHandler implements CommandHandlerInterface
 {
     private UserRepositoryInterface $userRepository;
-    private TokenGeneratorInterface $tokenGenerator;
+    private ConfirmPasswordTokenFactoryAbstract $tokenFactory;
     private MailServiceInterface $mailService;
 
     public function __construct(UserRepositoryInterface $userRepository,
-                                TokenGeneratorInterface $tokenGenerator,
+                                ConfirmPasswordTokenFactoryAbstract $tokenFactory,
                                 MailServiceInterface $mailService)
     {
         $this->userRepository = $userRepository;
-        $this->tokenGenerator = $tokenGenerator;
+        $this->tokenFactory = $tokenFactory;
         $this->mailService = $mailService;
     }
 
@@ -31,14 +31,14 @@ class SendInviteRecoveryPasswordCommandHandler implements CommandHandlerInterfac
             throw new EmailInviteException('User not found');
         }
 
-        $token = $this->tokenGenerator->generateConfirmationToken($user);
+        $token = $this->tokenFactory->create($user);
 
         $this->mailService->sendEmail(
             $command->getEmail(),
             "",
-            "confirm_user.html.twig",
+            "request-password-restore.html.twig",
             true,
-            ['url' => $command->getUrl()."?token={$token}"]
+            ['token' => $token->confirmationEmailToken]
         );
     }
 

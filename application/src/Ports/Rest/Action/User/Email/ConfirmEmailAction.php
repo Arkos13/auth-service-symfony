@@ -9,8 +9,8 @@ use App\Ports\Rest\Request\User\ConfirmEmailRequest;
 use Exception;
 use JMS\Serializer\SerializerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Swagger\Annotations as SWG;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -40,13 +40,13 @@ class ConfirmEmailAction extends BaseAction
      * )
      * @Route("/open_api/users/email/confirm", methods={"POST"}, name="user_email_confirm")
      * @param ConfirmEmailRequest $emailInviteRequest
-     * @return JsonResponse
+     * @return Response
      */
-    public function __invoke(ConfirmEmailRequest $emailInviteRequest)
+    public function __invoke(ConfirmEmailRequest $emailInviteRequest): Response
     {
         try {
             $this->commandBus->handle(new ConfirmUserByEmailCommand($emailInviteRequest->token));
-            return new JsonResponse(true);
+            return $this->jsonResponse(true);
         } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage(), $e);
         }

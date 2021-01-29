@@ -18,7 +18,7 @@ class ConfirmUserCommandHandler implements CommandHandlerInterface
 
     public function __invoke(ConfirmUserCommand $command): void
     {
-        $user = $this->userRepository->findOneByConfirmationToken($command->getToken());
+        $user = $this->userRepository->findOneByConfirmationToken($command->token);
 
         if (!$user) {
             throw new UserConfirmationTokenNotFoundException();

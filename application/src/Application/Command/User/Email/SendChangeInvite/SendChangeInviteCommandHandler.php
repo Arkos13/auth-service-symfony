@@ -6,8 +6,8 @@ use App\Application\Command\CommandHandlerInterface;
 use App\Application\Service\Mail\MailServiceInterface;
 use App\Model\User\Exception\EmailInviteException;
 use App\Model\User\Repository\UserRepositoryInterface;
-use App\Model\User\Service\ConfirmEmailToken\Factory\ConfirmEmailTokenFactoryAbstract;
-use App\Model\User\Service\ConfirmEmailToken\Factory\Data as ConfirmEmailTokenFactoryData;
+use App\Application\Service\User\ConfirmEmailToken\ConfirmEmailTokenFactoryAbstract;
+use App\Application\Service\User\ConfirmEmailToken\Data as ConfirmEmailTokenFactoryData;
 
 class SendChangeInviteCommandHandler implements CommandHandlerInterface
 {
@@ -26,26 +26,26 @@ class SendChangeInviteCommandHandler implements CommandHandlerInterface
 
     public function __invoke(SendChangeInviteCommand $command): void
     {
-        $user = $this->userRepository->findOneByEmail($command->getEmail());
+        $user = $this->userRepository->findOneByEmail($command->email);
 
         if (!$user) {
             throw new EmailInviteException('User not found');
         }
 
-        if ($this->userRepository->findOneByEmail($command->getNewEmail())) {
+        if ($this->userRepository->findOneByEmail($command->newEmail)) {
             throw new EmailInviteException('This email already exists');
         }
 
         $token = $this->confirmEmailTokenFactory->create(
-            new ConfirmEmailTokenFactoryData($user, $command->getNewEmail())
+            new ConfirmEmailTokenFactoryData($user, $command->newEmail)
         );
 
         $this->mailService->sendEmail(
-            $command->getNewEmail(),
+            $command->newEmail,
             "",
             "change_email.html.twig",
             true,
-            ['url' => $command->getUrl()."?token={$token->getConfirmationEmailToken()}"]
+            ['url' => $command->url."?token={$token->confirmationEmailToken}"]
         );
     }
 
