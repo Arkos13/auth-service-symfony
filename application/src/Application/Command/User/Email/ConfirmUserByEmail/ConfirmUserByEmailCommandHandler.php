@@ -3,7 +3,6 @@
 namespace App\Application\Command\User\Email\ConfirmUserByEmail;
 
 use App\Application\Command\CommandHandlerInterface;
-use App\Model\Shared\Event\EventBusInterface;
 use App\Model\User\Exception\ConfirmEmailTokenNotFoundException;
 use App\Model\User\Exception\TokenExpiredException;
 use App\Model\User\Repository\ConfirmEmailTokenRepositoryInterface;
@@ -13,15 +12,12 @@ class ConfirmUserByEmailCommandHandler implements CommandHandlerInterface
 {
     private ConfirmEmailTokenRepositoryInterface $confirmEmailTokenRepository;
     private UserRepositoryInterface $userRepository;
-    private EventBusInterface $eventBus;
 
     public function __construct(ConfirmEmailTokenRepositoryInterface $confirmEmailTokenRepository,
-                                UserRepositoryInterface $userRepository,
-                                EventBusInterface $eventBus)
+                                UserRepositoryInterface $userRepository)
     {
         $this->confirmEmailTokenRepository = $confirmEmailTokenRepository;
         $this->userRepository = $userRepository;
-        $this->eventBus = $eventBus;
     }
 
     public function __invoke(ConfirmUserByEmailCommand $command): void
@@ -41,7 +37,5 @@ class ConfirmUserByEmailCommandHandler implements CommandHandlerInterface
         $this->userRepository->add($user);
 
         $this->confirmEmailTokenRepository->remove($confirmEmailToken);
-
-        $this->eventBus->handle(...$user->pullDomainEvents());
     }
 }

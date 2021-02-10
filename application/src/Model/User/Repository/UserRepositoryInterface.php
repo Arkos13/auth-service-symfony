@@ -12,4 +12,5 @@ interface UserRepositoryInterface
     public function getOneById(string $id): User;
     public function getOneByEmail(string $email): User;
     public function add(User $user): void;
+    public function checkExistsPhone(string $phone): bool;
 }

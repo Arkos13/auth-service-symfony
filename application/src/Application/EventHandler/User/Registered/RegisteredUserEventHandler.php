@@ -6,7 +6,6 @@ use App\Model\Shared\Event\EventHandlerInterface;
 use App\Application\Service\Mail\MailServiceInterface;
 use App\Model\User\Event\RegisteredUserEvent;
 use App\Model\User\Exception\EmailInviteException;
-use App\Model\User\Repository\UserProfileRepositoryInterface;
 use App\Model\User\Repository\UserRepositoryInterface;
 use App\Application\Service\User\Token\TokenGeneratorInterface;
 
@@ -14,17 +13,14 @@ class RegisteredUserEventHandler implements EventHandlerInterface
 {
     private MailServiceInterface $mailService;
     private UserRepositoryInterface $userRepository;
-    private UserProfileRepositoryInterface $userProfileRepository;
     private TokenGeneratorInterface $tokenGenerator;
 
     public function __construct(MailServiceInterface $mailService,
                                 UserRepositoryInterface $userRepository,
-                                UserProfileRepositoryInterface $userProfileRepository,
                                 TokenGeneratorInterface $tokenGenerator)
     {
         $this->mailService = $mailService;
         $this->userRepository = $userRepository;
-        $this->userProfileRepository = $userProfileRepository;
         $this->tokenGenerator = $tokenGenerator;
     }
 
@@ -37,7 +33,7 @@ class RegisteredUserEventHandler implements EventHandlerInterface
         }
 
         $token = $this->tokenGenerator->generateConfirmationToken($user);
-        $profile = $this->userProfileRepository->getOneByUserId($user->id);
+        $profile = $user->profile;
 
         $this->mailService->sendEmail(
             $event->email,

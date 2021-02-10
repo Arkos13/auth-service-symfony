@@ -2,8 +2,8 @@
 
 namespace App\Infrastructure\User\ReadModel;
 
-use App\Model\User\ReadModel\UserAuthDTO;
-use App\Model\User\ReadModel\UserFetcherInterface;
+use App\ReadModel\User\UserAuthDTO;
+use App\ReadModel\User\UserFetcherInterface;
 use Doctrine\DBAL\Driver\Result;
 use Doctrine\ORM\EntityManagerInterface;
 

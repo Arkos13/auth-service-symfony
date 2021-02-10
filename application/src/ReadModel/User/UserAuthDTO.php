@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\User\ReadModel;
+namespace App\ReadModel\User;
 
 use InvalidArgumentException;
 

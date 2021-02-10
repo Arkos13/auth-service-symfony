@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\User\Security;
 
-use App\Model\User\ReadModel\UserFetcherInterface;
+use App\ReadModel\User\UserFetcherInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;

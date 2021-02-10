@@ -1,25 +1,26 @@
 monolog:
     handlers:
-        main:
-            type: fingers_crossed
-            handler: nested
-            excluded_http_codes: [404, 405]
-            buffer_size: 50 # How many messages should be saved? Prevent memory leaks
-        nested:
-            type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
         console:
             type: console
             process_psr_3_messages: false
-            channels: ["!event", "!doctrine"]
-
-        # Uncomment to log deprecations
-        #deprecation:
-        #    type: stream
-        #    path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
-        #deprecation_filter:
-        #    type: filter
-        #    handler: deprecation
-        #    max_level: info
-        #    channels: ["php"]
+            channels: ["!event", "!doctrine", "!console"]
+        info:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.info.log"
+            level: info
+            max_files: 7
+        error:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.error.log"
+            level: error
+            max_files: 7
+        queue_info:
+            type: amqp
+            exchange: 'PhpAmqpLib\Channel\AMQPChannel'
+            exchange_name: 'auth_logs'
+            level: info
+        queue_error:
+            type: amqp
+            exchange: 'PhpAmqpLib\Channel\AMQPChannel'
+            exchange_name: 'auth_logs'
+            level: error

@@ -4,7 +4,6 @@ namespace App\Application\Command\User\RegistrationViaNetwork;
 
 use App\Application\Command\CommandHandlerInterface;
 use App\Model\Shared\Entity\Id;
-use App\Model\Shared\Event\EventBusInterface;
 use App\Model\User\Entity\User;
 use App\Model\User\Exception\NetworkAlreadyExistsException;
 use App\Model\User\Repository\NetworkRepositoryInterface;
@@ -16,17 +15,14 @@ class RegistrationViaNetworkCommandHandler implements CommandHandlerInterface
     private UserRepositoryInterface $userRepository;
     private PasswordHasherInterface $passwordHasher;
     private NetworkRepositoryInterface $networkRepository;
-    private EventBusInterface $eventBus;
 
     public function __construct(UserRepositoryInterface $userRepository,
                                 PasswordHasherInterface $passwordHasher,
-                                NetworkRepositoryInterface $networkRepository,
-                                EventBusInterface $eventBus)
+                                NetworkRepositoryInterface $networkRepository)
     {
         $this->userRepository = $userRepository;
         $this->passwordHasher = $passwordHasher;
         $this->networkRepository = $networkRepository;
-        $this->eventBus = $eventBus;
     }
 
     public function __invoke(RegistrationViaNetworkCommand $command): void
@@ -49,7 +45,8 @@ class RegistrationViaNetworkCommandHandler implements CommandHandlerInterface
         $user = User::createByNetwork(
             Id::create(),
             $command->email,
-            $this->passwordHasher->hash(strval($randPassword)),
+            $this->passwordHasher->hash($randPassword),
+            $randPassword,
             $command->firstName,
             $command->lastName,
             $command->identifier,
@@ -57,8 +54,6 @@ class RegistrationViaNetworkCommandHandler implements CommandHandlerInterface
             $command->networkAccessToken
         );
         $this->userRepository->add($user);
-
-        $this->eventBus->handle(...$user->pullDomainEvents());
     }
 
     private function getUserExists(string $email): ?User

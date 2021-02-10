@@ -68,4 +68,21 @@ class UserRepository implements UserRepositoryInterface
 
         return $user;
     }
+
+    public function checkExistsPhone(string $phone): bool
+    {
+        $phone = $this
+            ->em
+            ->createQueryBuilder()
+            ->from(User::class, "u")
+            ->select("p.phone")
+            ->innerJoin("u.profile", "p")
+            ->where("p.phone = :phone")
+            ->setParameter("phone", $phone)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return !!$phone;
+    }
 }

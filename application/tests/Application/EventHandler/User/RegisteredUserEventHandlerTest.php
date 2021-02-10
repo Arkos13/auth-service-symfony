@@ -8,7 +8,6 @@ use App\Application\Service\User\Token\TokenGeneratorInterface;
 use App\Infrastructure\Shared\Persistence\DataFixtures\User\UserFixtures;
 use App\Model\User\Event\RegisteredUserEvent;
 use App\Model\User\Exception\EmailInviteException;
-use App\Model\User\Repository\UserProfileRepositoryInterface;
 use App\Model\User\Repository\UserRepositoryInterface;
 use App\Tests\Application\ApplicationTestCase;
 
@@ -20,7 +19,6 @@ class RegisteredUserEventHandlerTest extends ApplicationTestCase
         $handler = new RegisteredUserEventHandler(
             $this->service(MailServiceInterface::class),
             $this->service(UserRepositoryInterface::class),
-            $this->service(UserProfileRepositoryInterface::class),
             $this->service(TokenGeneratorInterface::class),
         );
 
@@ -36,7 +34,6 @@ class RegisteredUserEventHandlerTest extends ApplicationTestCase
         $handler = new RegisteredUserEventHandler(
             $mailService,
             $this->service(UserRepositoryInterface::class),
-            $this->service(UserProfileRepositoryInterface::class),
             $this->service(TokenGeneratorInterface::class),
         );
 

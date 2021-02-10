@@ -2,9 +2,9 @@
 
 namespace App\Model\User\Entity;
 
-use App\Model\Shared\Aggregate\AggregateRoot;
 use App\Model\Shared\Entity\CreatedUpdatedTrait;
 use App\Model\Shared\Entity\Id;
+use App\Model\Shared\Event\DomainEvents;
 use App\Model\User\Event\ChangedPasswordEvent;
 use App\Model\User\Event\EditedUserEmailEvent;
 use App\Model\User\Event\EditedUserPhoneEvent;
@@ -21,7 +21,7 @@ use JMS\Serializer\Annotation as JMS;
  * @ORM\Entity()
  * @ORM\Table(name="users", uniqueConstraints={@ORM\UniqueConstraint(name="email_idx", columns={"email"})})
  */
-class User extends AggregateRoot
+class User
 {
     use CreatedUpdatedTrait;
 
@@ -90,13 +90,14 @@ class User extends AggregateRoot
             $password,
         );
         $user->profile = UserProfile::create($user, $firstName, $lastName);
-        $user->apply(new RegisteredUserEvent($user->email));
+        DomainEvents::apply(new RegisteredUserEvent($user->email));
         return $user;
     }
 
     public static function createByNetwork(Id $id,
                                            string $email,
-                                           string $password,
+                                           string $hashPassword,
+                                           string $originPassword,
                                            string $firstName,
                                            string $lastName,
                                            string $networkIdentifier,
@@ -106,14 +107,14 @@ class User extends AggregateRoot
         $user = new User(
             $id->id,
             $email,
-            $password,
+            $hashPassword,
         );
         $user->profile = UserProfile::create($user, $firstName, $lastName);
         $user->addNetwork($networkIdentifier, $network, $networkAccessToken);
 
-        $user->apply(new RegisteredUserViaNetworkEvent(
+        DomainEvents::apply(new RegisteredUserViaNetworkEvent(
             $user->email,
-            $password
+            $originPassword
         ));
 
         return $user;
@@ -121,7 +122,7 @@ class User extends AggregateRoot
 
     public function setEmail(string $email): void
     {
-        $this->apply(
+        DomainEvents::apply(
             new EditedUserEmailEvent(
                 $this->email,
                 $email
@@ -134,13 +135,13 @@ class User extends AggregateRoot
     public function setPassword(string $password): void
     {
         $this->password = $password;
-        $this->apply(new ChangedPasswordEvent($this->email));
+        DomainEvents::apply(new ChangedPasswordEvent($this->email));
     }
 
     public function setPhone(string $phone): void
     {
         $this->profile->setPhone($phone);
-        $this->apply(new EditedUserPhoneEvent($this->email, $phone));
+        DomainEvents::apply(new EditedUserPhoneEvent($this->email, $phone));
     }
 
     public function editProfile(string $firstName,
@@ -149,7 +150,7 @@ class User extends AggregateRoot
                                 ?string $gender): void
     {
         $this->profile->editProfile($firstName, $lastName, $birthday, $gender);
-        $this->apply(
+        DomainEvents::apply(
             new EditedUserProfileEvent(
                 $this->email,
                 $firstName,

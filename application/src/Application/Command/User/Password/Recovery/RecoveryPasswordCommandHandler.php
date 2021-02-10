@@ -3,7 +3,6 @@
 namespace App\Application\Command\User\Password\Recovery;
 
 use App\Application\Command\CommandHandlerInterface;
-use App\Model\Shared\Event\EventBusInterface;
 use App\Application\Service\PasswordHasher\PasswordHasherInterface;
 use App\Model\User\Exception\ConfirmPasswordTokenNotFoundException;
 use App\Model\User\Exception\TokenExpiredException;
@@ -15,17 +14,14 @@ class RecoveryPasswordCommandHandler implements CommandHandlerInterface
     private ConfirmPasswordTokenRepositoryInterface $confirmPasswordTokenRepository;
     private UserRepositoryInterface $userRepository;
     private PasswordHasherInterface $passwordHasher;
-    private EventBusInterface $eventBus;
 
     public function __construct(ConfirmPasswordTokenRepositoryInterface $confirmPasswordTokenRepository,
                                 UserRepositoryInterface $userRepository,
-                                PasswordHasherInterface $passwordHasher,
-                                EventBusInterface $eventBus)
+                                PasswordHasherInterface $passwordHasher)
     {
         $this->confirmPasswordTokenRepository = $confirmPasswordTokenRepository;
         $this->userRepository = $userRepository;
         $this->passwordHasher = $passwordHasher;
-        $this->eventBus = $eventBus;
     }
 
     public function __invoke(RecoveryPasswordCommand $command): void
@@ -45,8 +41,6 @@ class RecoveryPasswordCommandHandler implements CommandHandlerInterface
         $user->setPassword($this->passwordHasher->hash($command->getPassword()));
         $this->userRepository->add($user);
         $this->confirmPasswordTokenRepository->remove($confirmToken);
-
-        $this->eventBus->handle(...$user->pullDomainEvents());
     }
 
 
